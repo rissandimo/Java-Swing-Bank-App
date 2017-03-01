@@ -21,7 +21,7 @@ public class Main
     private void createFrame()
     {
         frame = new JFrame("Bank");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setSize(450, 350);
 
