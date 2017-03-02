@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Main
 {
@@ -8,7 +10,6 @@ public class Main
     private JButton createAccount;
     private JButton accessAccount;
     private JLabel label;
-    private JPanel contentPane;
     private JPanel buttonsPanel;
     private JPanel labelPanel;
 
@@ -27,6 +28,7 @@ public class Main
 
 
         createAccount = new JButton("Create Account");
+        createAccount.addActionListener(new CreateAccountListener());
         accessAccount = new JButton("Access Account");
 
         label = new JLabel("Please make a selection below");
@@ -43,6 +45,16 @@ public class Main
 
 
         frame.setVisible(true);
+    }
+
+
+    class CreateAccountListener implements ActionListener
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            frame.dispose();
+            new CreateAccount();
+        }
     }
 
     public static void main(String[] args)
