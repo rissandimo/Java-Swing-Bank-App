@@ -17,17 +17,13 @@ public class Main
         createFrame();
     }
 
-    // Can't figure out how to position the elements correctly
+
     private void createFrame()
     {
         frame = new JFrame("Bank");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setSize(450, 350);
-
-
-        contentPane = new JPanel();
-        frame.setContentPane(contentPane);
 
 
         createAccount = new JButton("Create Account");
@@ -37,13 +33,13 @@ public class Main
         labelPanel = new JPanel();
         labelPanel.add(label);
 
-        contentPane.add(labelPanel, BorderLayout.CENTER);
+        frame.getContentPane().add(BorderLayout.CENTER, labelPanel);
 
         buttonsPanel = new JPanel();
         buttonsPanel.add(createAccount);
         buttonsPanel.add(accessAccount);
 
-        contentPane.add(buttonsPanel, BorderLayout.SOUTH);
+        frame.getContentPane().add(BorderLayout.SOUTH, buttonsPanel);
 
 
         frame.setVisible(true);
