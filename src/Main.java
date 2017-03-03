@@ -29,6 +29,7 @@ public class Main
         createAccount = new JButton("Create Account");
         createAccount.addActionListener(new CreateAccountListener());
         accessAccount = new JButton("Access Account");
+        accessAccount.addActionListener(new AccessAccountListener());
 
         label = new JLabel("Please make a selection below");
         labelPanel = new JPanel();
@@ -53,6 +54,15 @@ public class Main
         {
             frame.dispose();
             new CreateAccount();
+        }
+    }
+
+    class AccessAccountListener implements ActionListener
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            frame.dispose();
+            new AccessAccount();
         }
     }
 
