@@ -35,14 +35,11 @@ public class Main
 
             buttonAccessAccount = new JButton("Acess Account");
 
-            //replace with lambda
-            buttonAccessAccount.addActionListener(new ActionListener()
+            buttonAccessAccount.addActionListener( (actionEvent) ->
             {
-                public void actionPerformed(ActionEvent e)
-                {
-                    frame.dispose();
-                    new AccessAccount();
-                }
+                frame.dispose();
+                new AccessAccount();
+
             });
 
             buttonCreateAccount = new JButton("Create Account");
