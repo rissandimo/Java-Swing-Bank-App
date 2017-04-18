@@ -1,35 +1,68 @@
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 
 public class Main
 {
-    private JFrame frame;
-    private JButton createAccount;
-    private JButton accessAccount;
-    private JLabel label;
-    private JPanel buttonsPanel;
-    private JPanel labelPanel;
+
 
     private Main()
     {
-        createFrame();
+        Frame frame = new Frame();
+    }
+
+    class Frame extends JFrame
+    {
+
+        private JFrame frame;
+        private JButton buttonCreateAccount;
+        private JButton buttonAccessAccount;
+        private JLabel label;
+        private JPanel buttonsPanel;
+        private JPanel labelPanel;
+
+
+
+         Frame()
+        {
+            createFrame();
+        }
+
+        private void createFrame()
+        {
+            setBounds(400, 300, 450, 350);
+            setTitle("Bank");
+            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+            buttonAccessAccount = new JButton("Acess Account");
+
+            //replace with lambda
+            buttonAccessAccount.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent e)
+                {
+                    frame.dispose();
+                    new AccessAccount();
+                }
+            });
+
+            buttonCreateAccount = new JButton("Create Account");
+            //replace with lambda
+            buttonCreateAccount.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent e)
+                {
+                    frame.dispose();
+                    new AccessAccount();
+                }
+            });
+
+            setVisible(true);
+        }
     }
 
 
-    private void createFrame()
+/*    private void createFrame()
     {
-        frame = new JFrame("Bank");
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.setSize(450, 350);
-
-
-        createAccount = new JButton("Create Account");
-        createAccount.addActionListener(new CreateAccountListener());
-        accessAccount = new JButton("Access Account");
-        accessAccount.addActionListener(new AccessAccountListener());
 
         label = new JLabel("Please make a selection below");
         labelPanel = new JPanel();
@@ -56,15 +89,7 @@ public class Main
             new CreateAccount();
         }
     }
-
-    class AccessAccountListener implements ActionListener
-    {
-        public void actionPerformed(ActionEvent e)
-        {
-            frame.dispose();
-            new AccessAccount();
-        }
-    }
+    }*/
 
     public static void main(String[] args)
     {
