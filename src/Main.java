@@ -19,7 +19,7 @@ public class Main {
         private JFrame frame;
         private JButton buttonCreateAccount;
         private JButton buttonAccessAccount;
-        private JLabel label;
+        private JLabel labelSelection;
         private JPanel buttonsPanel;
         private JPanel labelPanel;
 
@@ -33,15 +33,21 @@ public class Main {
             setTitle("Bank");
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-
-            //LABEL
-
-            label = new JLabel();
-
-
             //BUTTONS
 
             buttonAccessAccount = new JButton("Access Account");
+            buttonCreateAccount = new JButton("Create Account");
+
+            //LABELS
+
+            labelSelection = new JLabel("Please make a selection below");
+
+
+            //PANELS
+            buttonsPanel = new JPanel();
+            labelPanel = new JPanel();
+
+            //Action Listeners
 
             buttonAccessAccount.addActionListener((ActionEvent actionEvent) ->
             {
@@ -50,7 +56,6 @@ public class Main {
 
             });
 
-            buttonCreateAccount = new JButton("Create Account");
 
             //replace with lambda
             buttonCreateAccount.addActionListener((ActionEvent actionEvent) ->
@@ -59,11 +64,15 @@ public class Main {
                     new AccessAccount();
                 });
 
-            buttonsPanel = new JPanel();
+            // ADD COMPONENTS TO FRAME
+
             buttonsPanel.add(buttonAccessAccount);
             buttonsPanel.add(buttonCreateAccount);
 
+            labelPanel.add(labelSelection);
+
             add(buttonsPanel, BorderLayout.SOUTH);
+            add(labelPanel, BorderLayout.CENTER);
 
             setVisible(true);
         }
