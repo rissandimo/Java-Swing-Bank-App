@@ -1,17 +1,20 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
-public class Main
-{
+public class Main {
 
-
-    private Main()
+    public static void main(String[] args)
     {
+        new Main();
+    }
+
+
+    private Main() {
         Frame frame = new Frame();
     }
 
-    class Frame extends JFrame
-    {
+    class Frame extends JFrame {
 
         private JFrame frame;
         private JButton buttonCreateAccount;
@@ -21,75 +24,50 @@ public class Main
         private JPanel labelPanel;
 
 
-
-         Frame()
-        {
+        Frame() {
             createFrame();
         }
 
-        private void createFrame()
-        {
+        private void createFrame() {
             setBounds(400, 300, 450, 350);
             setTitle("Bank");
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-            buttonAccessAccount = new JButton("Acess Account");
 
-            buttonAccessAccount.addActionListener( (actionEvent) ->
+            //LABEL
+
+            label = new JLabel();
+
+
+            //BUTTONS
+
+            buttonAccessAccount = new JButton("Access Account");
+
+            buttonAccessAccount.addActionListener((ActionEvent actionEvent) ->
             {
-                frame.dispose();
+                this.dispose();
                 new AccessAccount();
 
             });
 
             buttonCreateAccount = new JButton("Create Account");
+
             //replace with lambda
-            buttonCreateAccount.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
+            buttonCreateAccount.addActionListener((ActionEvent actionEvent) ->
                 {
                     frame.dispose();
                     new AccessAccount();
-                }
-            });
+                });
+
+            buttonsPanel = new JPanel();
+            buttonsPanel.add(buttonAccessAccount);
+            buttonsPanel.add(buttonCreateAccount);
+
+            add(buttonsPanel, BorderLayout.SOUTH);
 
             setVisible(true);
         }
     }
-
-
-/*    private void createFrame()
-    {
-
-        label = new JLabel("Please make a selection below");
-        labelPanel = new JPanel();
-        labelPanel.add(label);
-
-        frame.getContentPane().add(BorderLayout.CENTER, labelPanel);
-
-        buttonsPanel = new JPanel();
-        buttonsPanel.add(createAccount);
-        buttonsPanel.add(accessAccount);
-
-        frame.getContentPane().add(BorderLayout.SOUTH, buttonsPanel);
-
-
-        frame.setVisible(true);
-    }
-
-
-    class CreateAccountListener implements ActionListener
-    {
-        public void actionPerformed(ActionEvent e)
-        {
-            frame.dispose();
-            new CreateAccount();
-        }
-    }
-    }*/
-
-    public static void main(String[] args)
-    {
-        new Main();
-    }
 }
+
+
