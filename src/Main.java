@@ -60,8 +60,8 @@ public class Main {
             //replace with lambda
             buttonCreateAccount.addActionListener((ActionEvent actionEvent) ->
                 {
-                    frame.dispose();
-                    new AccessAccount();
+                    this.dispose();
+                    new CreateAccount();
                 });
 
             // ADD COMPONENTS TO FRAME
