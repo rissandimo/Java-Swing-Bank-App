@@ -68,9 +68,9 @@ class CreateAccount
                 panelInputs.setLayout(new BoxLayout(panelInputs,BoxLayout.Y_AXIS)); // RIGHT
 
                 //ADD LABELS TO PANEL
-                panelLabels.add(labelEmail);
                 panelLabels.add(labelFirstName);
                 panelLabels.add(labelLastName);
+                panelLabels.add(labelEmail);
                 panelLabels.add(labelSocial);
                 panelLabels.add(labelTelephone);
 
@@ -97,11 +97,6 @@ class CreateAccount
         }
 
 
-    }
-
-    public static void main(String[] args)
-    {
-        new CreateAccount();
     }
 
 
