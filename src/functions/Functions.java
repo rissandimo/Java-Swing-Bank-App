@@ -3,7 +3,7 @@ package functions;
 public class Functions
 {
     // will return true if string is empty or null - returning false means its good
-    static boolean isStringEmpty(String string)
+    public static boolean isStringEmpty(String string)
     {
         boolean empty = true;
         String emptyString; // removed newString() - because compiler stated that it's reduntant
