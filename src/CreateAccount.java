@@ -1,9 +1,20 @@
+import functions.Functions;
+
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.Border;
 
 class CreateAccount
 {
+    private int clientAge;
+    private double clientBalance;
+
+
+    public static void main(String[] args)
+    {
+        new CreateAccount();
+    }
+
 
 
     CreateAccount()
@@ -13,10 +24,11 @@ class CreateAccount
 
         class Frame extends JFrame
         {
+            private String clientEmail, clientFirstName, clientLastName, clientSocial;
             private JButton buttonSubmit, buttonClear;
             private JLabel labelFirstName, labelLastName, labelSocial, labelTelephone, labelEmail, labelSelection;
             private JPanel panelLabels, panelInputs, panelButtons, panelTop;
-            private JTextField inputFirstName, inputLastName, inputSocial, inputTelephone, inputEmail;
+            JTextField inputFirstName, inputLastName, inputSocial, inputTelephone, inputEmail;
 
 
               Frame()
@@ -52,6 +64,10 @@ class CreateAccount
                 //BUTTONS
                 buttonClear = new JButton("Clear");
                 buttonSubmit = new JButton("Submit");
+
+                buttonSubmit.addActionListener( (ActionEvent actionEvent) ->
+                        checkClientInfo());
+
 
 
                 //DIMENSION
@@ -96,8 +112,56 @@ class CreateAccount
                 setVisible(true);
         }
 
+             boolean checkClientInfo()
+            {
+                boolean informationCorrect;
+                this.clientFirstName = inputFirstName.getText();
+                this.clientLastName = inputLastName.getText();
+                this.clientEmail = inputEmail.getText();
+                this.clientSocial = inputSocial.getText();
+
+                //check WHY I have to put an exclamation point
+                if(!Functions.isStringEmpty(clientFirstName))
+                {
+                    JOptionPane.showMessageDialog(null, "First name can't be empty");
+                    informationCorrect = false;
+                }
+
+                else
+                    {
+                    System.out.println("Clients name is : " + clientFirstName);
+                    informationCorrect = true;
+                }
+                /*
+                else if(clientLastName.equalsIgnoreCase(""))
+                {
+                    JOptionPane.showMessageDialog(null, "Last name can't be empty");
+                }
+
+                for(int i=0; i < clientEmail.length(); i++)
+                {
+                    if(clientEmail.charAt(i) != '@')
+                    {
+                        JOptionPane.showMessageDialog();
+                    }
+
+                }
+                */
+
+                return informationCorrect;
+            }
+
+            private void createNewClient(String clientFirstName, String clientLastName, String clientEmail, String clientSocial)
+            {
+
+
+            }
+
 
     }
+
+
+
 
 
 }
