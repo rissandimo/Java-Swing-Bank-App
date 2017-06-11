@@ -1,3 +1,4 @@
+import com.sun.xml.internal.bind.v2.TODO;
 import functions.Functions;
 
 import java.awt.*;
@@ -43,9 +44,9 @@ class CreateAccount
                 labelFirstName = new JLabel("First Name: ");
                 labelLastName = new JLabel("Last Name: ");
                 labelEmail = new JLabel("Email: ");
-                labelSelection = new JLabel("Plese make a selection below");
+                labelSelection = new JLabel("Please make a selection below");
                 labelSocial = new JLabel("Social Security #: ");
-                labelTelephone = new JLabel("Telphone #");
+                labelTelephone = new JLabel("Telephone #");
 
                 //INPUTS
                 inputFirstName = new JTextField(15);
@@ -86,18 +87,18 @@ class CreateAccount
                 //ADD LABELS TO PANEL
                 panelLabels.add(labelFirstName);
                 panelLabels.add(labelLastName);
-                panelLabels.add(labelEmail);
+              //  panelLabels.add(labelEmail);
                 panelLabels.add(labelSocial);
-                panelLabels.add(labelTelephone);
+               // panelLabels.add(labelTelephone);
 
                 panelTop.add(labelSelection);
 
                 //ADD INPUTS TO PANEL
                 panelInputs.add(inputFirstName);
                 panelInputs.add(inputLastName);
-                panelInputs.add(inputEmail);
-                panelInputs.add(inputTelephone);
+               // panelInputs.add(inputEmail);
                 panelInputs.add(inputSocial);
+              //  panelInputs.add(inputTelephone);
 
                 //ADD BUTTONS TO PANEL
                 panelButtons.add(buttonSubmit);
@@ -112,50 +113,55 @@ class CreateAccount
                 setVisible(true);
         }
 
-             boolean checkClientInfo()
+            //Fix information Correct variable
+             void checkClientInfo()
             {
-                boolean informationCorrect;
-                this.clientFirstName = inputFirstName.getText();
-                this.clientLastName = inputLastName.getText();
-                this.clientEmail = inputEmail.getText();
-                this.clientSocial = inputSocial.getText();
 
-                //check WHY I have to put an exclamation point
-                if(!Functions.isStringEmpty(clientFirstName))
+                boolean informationCorrect;
+                clientFirstName = inputFirstName.getText();
+                clientLastName = inputLastName.getText();
+                clientSocial = inputSocial.getText();
+                System.out.println(clientSocial);
+
+                if(Functions.isStringEmpty(clientFirstName))
                 {
-                    JOptionPane.showMessageDialog(null, "First name can't be empty");
+                    JOptionPane.showMessageDialog(null, "First Name can't be empty");
                     informationCorrect = false;
                 }
-
                 else
-                    {
-                    System.out.println("Clients name is : " + clientFirstName);
+                {
                     informationCorrect = true;
                 }
-                /*
-                else if(clientLastName.equalsIgnoreCase(""))
+
+                if(Functions.isStringEmpty(clientLastName))
                 {
-                    JOptionPane.showMessageDialog(null, "Last name can't be empty");
+                    JOptionPane.showMessageDialog(null, "Last Name can't be empty");
+                    informationCorrect = false;
+                }
+                else
+                {
+                    informationCorrect = true;
                 }
 
-                for(int i=0; i < clientEmail.length(); i++)
+                String socialWithoutSymbols = clientSocial.replaceAll("-","");
+                if(socialWithoutSymbols.length() != 9)
                 {
-                    if(clientEmail.charAt(i) != '@')
-                    {
-                        JOptionPane.showMessageDialog();
-                    }
-
+                    JOptionPane.showMessageDialog(null, "Social is not 9 digits long");
+                    System.out.println("social length: " + socialWithoutSymbols.length());
+                    informationCorrect = false;
                 }
-                */
+                else
+                {
+                    informationCorrect = true;
+                }
 
-                return informationCorrect;
+                if(informationCorrect)
+                {
+                    new Account(clientFirstName, clientLastName, clientEmail, clientSocial);
+                    this.dispose();
+                }
             }
 
-            private void createNewClient(String clientFirstName, String clientLastName, String clientEmail, String clientSocial)
-            {
-
-
-            }
 
 
     }
