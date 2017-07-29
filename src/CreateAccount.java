@@ -1,11 +1,10 @@
-import com.sun.xml.internal.bind.v2.TODO;
 import functions.Functions;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-class CreateAccount
+class CreateAccount // works
 {
     private int clientAge;
     private double clientBalance;
@@ -20,10 +19,10 @@ class CreateAccount
 
     CreateAccount()
     {
-        new Frame();
+        new CreateAccountFrame();
     }
 
-        class Frame extends JFrame
+        class CreateAccountFrame extends JFrame
         {
             private String clientEmail, clientFirstName, clientLastName, clientSocial;
             private JButton buttonSubmit, buttonClear;
@@ -32,128 +31,121 @@ class CreateAccount
             JTextField inputFirstName, inputLastName, inputSocial, inputTelephone, inputEmail;
 
 
-              Frame()
+              CreateAccountFrame()
             {
-                setSize(350, 250);
-                setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                setLocationRelativeTo(null);
-                setResizable(false);
-                setTitle("Create Account");
+               createFrame();
+            }
 
-                //LABELS
-                labelFirstName = new JLabel("First Name: ");
-                labelLastName = new JLabel("Last Name: ");
-                labelEmail = new JLabel("Email: ");
-                labelSelection = new JLabel("Please make a selection below");
-                labelSocial = new JLabel("Social Security #: ");
-                labelTelephone = new JLabel("Telephone #");
+        void createFrame()
+        {
+            setSize(350, 250);
+            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            setLocationRelativeTo(null);
+            setResizable(false);
+            setTitle("Create Account");
 
-                //INPUTS
-                inputFirstName = new JTextField(15);
-                inputLastName = new JTextField(15);
-                inputEmail = new JTextField(15);
-                inputTelephone = new JTextField(15);
-                inputSocial = new JTextField(15);
+            //LABELS
+            labelFirstName = new JLabel("First Name: ");
+            labelLastName = new JLabel("Last Name: ");
+            labelEmail = new JLabel("Email: ");
+            labelSelection = new JLabel("Please make a selection below");
+            labelSocial = new JLabel("Social Security #: ");
+            labelTelephone = new JLabel("Telephone #");
 
-                //PANELS
-                panelButtons = new JPanel();
-                panelInputs = new JPanel();
-                panelLabels = new JPanel();
-                panelTop = new JPanel();
+            //INPUTS
+            inputFirstName = new JTextField(15);
+            inputLastName = new JTextField(15);
+            inputEmail = new JTextField(15);
+            inputTelephone = new JTextField(15);
+            inputSocial = new JTextField(15);
 
-
-                //BUTTONS
-                buttonClear = new JButton("Clear");
-                buttonSubmit = new JButton("Submit");
-
-                buttonSubmit.addActionListener( (ActionEvent actionEvent) ->
-                        checkClientInfo());
+            //PANELS
+            panelButtons = new JPanel();
+            panelInputs = new JPanel();
+            panelLabels = new JPanel();
+            panelTop = new JPanel();
 
 
+            //BUTTONS
+            buttonClear = new JButton("Clear");
+            buttonSubmit = new JButton("Submit");
 
-                //DIMENSION
-                Dimension textFieldDimension = new Dimension(5,0);
+            buttonSubmit.addActionListener( (ActionEvent actionEvent) ->
+                    checkClientInfo());
 
-                inputFirstName.setPreferredSize(textFieldDimension);
-                inputLastName.setPreferredSize(textFieldDimension);
-                inputEmail.setPreferredSize(textFieldDimension);
-                inputTelephone.setPreferredSize(textFieldDimension);
-                inputSocial.setPreferredSize(textFieldDimension);
 
-                //SET LAYOUTS
-                panelLabels.setLayout(new GridLayout(5,1)); // LEFT -- displays correctly
-                panelInputs.setLayout(new BoxLayout(panelInputs,BoxLayout.Y_AXIS)); // RIGHT
 
-                //ADD LABELS TO PANEL
-                panelLabels.add(labelFirstName);
-                panelLabels.add(labelLastName);
-              //  panelLabels.add(labelEmail);
-                panelLabels.add(labelSocial);
-               // panelLabels.add(labelTelephone);
+            //DIMENSION
+            Dimension textFieldDimension = new Dimension(5,0);
 
-                panelTop.add(labelSelection);
+            inputFirstName.setPreferredSize(textFieldDimension);
+            inputLastName.setPreferredSize(textFieldDimension);
+            inputEmail.setPreferredSize(textFieldDimension);
+            inputTelephone.setPreferredSize(textFieldDimension);
+            inputSocial.setPreferredSize(textFieldDimension);
 
-                //ADD INPUTS TO PANEL
-                panelInputs.add(inputFirstName);
-                panelInputs.add(inputLastName);
-               // panelInputs.add(inputEmail);
-                panelInputs.add(inputSocial);
-              //  panelInputs.add(inputTelephone);
+            //SET LAYOUTS
+            panelLabels.setLayout(new GridLayout(5,1)); // LEFT -- displays correctly
+            panelInputs.setLayout(new BoxLayout(panelInputs,BoxLayout.Y_AXIS)); // RIGHT
 
-                //ADD BUTTONS TO PANEL
-                panelButtons.add(buttonSubmit);
-                panelButtons.add(buttonClear);
+            //ADD LABELS TO PANEL
+            panelLabels.add(labelFirstName);
+            panelLabels.add(labelLastName);
+            //  panelLabels.add(labelEmail);
+            panelLabels.add(labelSocial);
+            // panelLabels.add(labelTelephone);
 
-                //ADD PANELS TO FRAME
-                add(BorderLayout.NORTH, panelTop);
-                add(BorderLayout.WEST, panelLabels);
-                add(BorderLayout.EAST, panelInputs);
-                add(BorderLayout.SOUTH, panelButtons);
+            panelTop.add(labelSelection);
 
-                setVisible(true);
+            //ADD INPUTS TO PANEL
+            panelInputs.add(inputFirstName);
+            panelInputs.add(inputLastName);
+            // panelInputs.add(inputEmail);
+            panelInputs.add(inputSocial);
+            //  panelInputs.add(inputTelephone);
+
+            //ADD BUTTONS TO PANEL
+            panelButtons.add(buttonSubmit);
+            panelButtons.add(buttonClear);
+
+            //ADD PANELS TO FRAME
+            add(BorderLayout.NORTH, panelTop);
+            add(BorderLayout.WEST, panelLabels);
+            add(BorderLayout.EAST, panelInputs);
+            add(BorderLayout.SOUTH, panelButtons);
+
+            setVisible(true);
         }
 
-            //Fix information Correct variable
+
              void checkClientInfo()
             {
 
-                boolean informationCorrect;
+                boolean informationCorrect = false;
                 clientFirstName = inputFirstName.getText();
                 clientLastName = inputLastName.getText();
                 clientSocial = inputSocial.getText();
-                System.out.println(clientSocial);
+                String socialWithoutExtraChars = clientSocial.replaceAll("[- ]","");
+                System.out.println("social: " + clientSocial);
 
                 if(Functions.isStringEmpty(clientFirstName))
                 {
                     JOptionPane.showMessageDialog(null, "First Name can't be empty");
-                    informationCorrect = false;
-                }
-                else
-                {
-                    informationCorrect = true;
                 }
 
-                if(Functions.isStringEmpty(clientLastName))
+                else if(Functions.isStringEmpty(clientLastName))
                 {
                     JOptionPane.showMessageDialog(null, "Last Name can't be empty");
-                    informationCorrect = false;
-                }
-                else
-                {
-                    informationCorrect = true;
                 }
 
-                String socialWithoutSymbols = clientSocial.replaceAll("-","");
-                if(socialWithoutSymbols.length() != 9)
+                else if(socialWithoutExtraChars.length() != 9)
                 {
                     JOptionPane.showMessageDialog(null, "Social is not 9 digits long");
-                    System.out.println("social length: " + socialWithoutSymbols.length());
-                    informationCorrect = false;
+                    System.out.println("social length: " + socialWithoutExtraChars.length());
                 }
-                else
-                {
+                else 
                     informationCorrect = true;
-                }
+                
 
                 if(informationCorrect)
                 {
