@@ -7,18 +7,23 @@ class AccessAccount {
     //changed to package-private
     AccessAccount()
     {
-        new Frame();
+        new AccessAccountFrame();
     }
 
 
-    class Frame extends JFrame
+    class AccessAccountFrame extends JFrame
     {
         private JButton submitButton, clearButton;
         private JPanel panelButtons, panelLabels, panelTextFields;
         private JTextField textFieldFullName, textFieldSocial;
 
         //changed to package-private
-        Frame()
+        AccessAccountFrame()
+        {
+            createFrame();
+        }
+
+       void createFrame()
         {
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             setLocationRelativeTo(null);
