@@ -1,3 +1,4 @@
+import databaseConnection.DatabaseConnection;
 import functions.Functions;
 
 import java.awt.*;
@@ -150,6 +151,7 @@ class CreateAccount // works
                 if(informationCorrect)
                 {
                     new Account(clientFirstName, clientLastName, clientEmail, clientSocial);
+                    new DatabaseConnection(clientFirstName, clientLastName,clientSocial);
                     this.dispose();
                 }
             }
