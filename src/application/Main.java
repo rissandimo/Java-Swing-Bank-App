@@ -1,8 +1,12 @@
+package application;
+
+import controller.AccessAccountListener;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
-public class Main {
+public class Main // works
+{
 
     public static void main(String[] args)
     {
@@ -29,13 +33,15 @@ public class Main {
         }
 
         private void createFrame() {
-            setBounds(400, 300, 450, 350);
+            setBounds(400, 300, 500, 400);
             setTitle("Bank");
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
             //BUTTONS
 
             buttonAccessAccount = new JButton("Access Account");
+            buttonAccessAccount.addActionListener(new AccessAccountListener());
+
             buttonCreateAccount = new JButton("Create Account");
 
             //LABELS
@@ -47,22 +53,6 @@ public class Main {
             buttonsPanel = new JPanel();
             labelPanel = new JPanel();
 
-            //Action Listeners
-
-            buttonAccessAccount.addActionListener((ActionEvent actionEvent) ->
-            {
-                this.dispose();
-                new AccessAccount();
-
-            });
-
-
-            //replace with lambda
-            buttonCreateAccount.addActionListener((ActionEvent actionEvent) ->
-                {
-                    this.dispose();
-                    new CreateAccount();
-                });
 
             // ADD COMPONENTS TO FRAME
 
