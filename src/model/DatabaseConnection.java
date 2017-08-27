@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class DatabaseConnection
 {
-    private Connection connection;
+    private Connection connection = null;
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;
 
@@ -17,20 +17,20 @@ public class DatabaseConnection
         new DatabaseConnection().createConnectionToDatabase();
     }
 
-    private DatabaseConnection()
+    public DatabaseConnection()
     {
     }
 
-    public DatabaseConnection(String first_name, String last_name, String ssn)
+/*    public DatabaseConnection(String first_name, String last_name, String ssn)
     {
         DatabaseConnection.first_name = first_name;
         DatabaseConnection.last_name = last_name;
         DatabaseConnection.ssn = ssn;
 
         createConnectionToDatabase();
-    }
+    }*/
 
-    private void createConnectionToDatabase()
+    public Connection createConnectionToDatabase()
     {
         try
         {
@@ -38,6 +38,8 @@ public class DatabaseConnection
             //1. Create connection
             connection = DriverManager.getConnection("jdbc:mysql://localhost/bank?autoReconnect=true&useSSL=false", "root", "password");
 
+
+/*
             String sqlQuery = "SELECT * FROM clients";
 
             Statement statement = connection.createStatement();
@@ -45,16 +47,22 @@ public class DatabaseConnection
 
             ResultSet resultSet = statement.executeQuery(sqlQuery);
 
+            System.out.println("Database Accessed");
+
+            System.out.println("Client info: ");
+
             while (resultSet.next())
             {
-                System.out.println(resultSet.getString(1) + resultSet.getString(2) + resultSet.getString(3));
-            }
+                System.out.println(resultSet.getString(1) + " " + resultSet.getString(2) + " " + resultSet.getString(3));
+            }*/
 
-        } catch (SQLException s)
+        }
+        catch (SQLException s)
         {
             s.printStackTrace();
         }
-
+        return connection;
     }
+
 
 }
