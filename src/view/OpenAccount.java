@@ -26,8 +26,11 @@ public class OpenAccount extends JFrame // works
         new OpenAccount();
     }
 
-    public OpenAccount()
+    // made access package-private
+     OpenAccount()
     {
+
+        System.out.println("Open Account");
             setSize(500, 300);
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             setLocationRelativeTo(null);
