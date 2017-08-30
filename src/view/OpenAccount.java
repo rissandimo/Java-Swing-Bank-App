@@ -41,7 +41,6 @@ public class OpenAccount extends JFrame // works
             labelFirstName = new JLabel("First Name: ");
             labelLastName = new JLabel("Last Name: ");
             labelSocial = new JLabel("Social Security #: ");
-            labelSelection = new JLabel("Pleae make a selection");
 
             //INPUTS
             inputFirstName = new JTextField(15);
@@ -72,8 +71,6 @@ public class OpenAccount extends JFrame // works
             panelLabels.setLayout(new GridLayout(5,1)); // LEFT -- displays correctly
             panelInputs.setLayout(new BoxLayout(panelInputs,BoxLayout.Y_AXIS)); // RIGHT
 
-        //ADD LABELS TO PANEL - North
-            panelTop.add(labelSelection);
 
             //ADD LABELS TO PANEL - WEST
             panelLabels.add(labelFirstName);
@@ -91,7 +88,6 @@ public class OpenAccount extends JFrame // works
             panelButtons.add(buttonClear);
 
             //ADD PANELS TO FRAME
-            add(BorderLayout.NORTH, panelTop);
             add(BorderLayout.WEST, panelLabels);
             add(BorderLayout.EAST, panelInputs);
             add(BorderLayout.SOUTH, panelButtons);
