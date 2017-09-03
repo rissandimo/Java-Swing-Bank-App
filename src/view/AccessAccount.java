@@ -5,10 +5,7 @@ import model.DatabaseConnection;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -34,10 +31,12 @@ public class AccessAccount extends JFrame // works
 
     //Testing
 
+/*
     public static void main(String[] args)
     {
         new AccessAccount("Omid","Nassir","123456789");
     }
+*/
 
 
 
@@ -46,6 +45,7 @@ public class AccessAccount extends JFrame // works
      AccessAccount(String clientFirstName, String clientLastName, String clientSocial)
     {
         System.out.println("\"Access account\"");
+        System.out.println(clientFirstName + clientLastName + clientSocial);
         firstName = clientFirstName;
         lastName = clientLastName;
         social = clientSocial;
@@ -87,10 +87,11 @@ public class AccessAccount extends JFrame // works
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         connection = new DatabaseConnection();
-        connectToDatabase();
+        int ssn = Integer.parseInt(social);
+        connectToDatabase(ssn);
     }
 
-    private void connectToDatabase()
+    private void connectToDatabase(int ssn)
     {
         System.out.println("Attempt to connect to database");
 
@@ -100,22 +101,22 @@ public class AccessAccount extends JFrame // works
         try
         {
 
-        Statement statement = bankConnection.createStatement();
+        String selectCustomers = "SELECT first_name, last_name, ssn FROM clients where ssn = ?";
+
+        PreparedStatement preparedStatement = bankConnection.prepareStatement(selectCustomers);
+
+        preparedStatement.setInt(1, ssn);
 
 
-        String selectCustomers = "SELECT first_name, last_name, ssn FROM clients where ssn = 108741869";
+        ResultSet resultSet = preparedStatement.executeQuery();
 
 
-        ResultSet resultSet = statement.executeQuery(selectCustomers);
-
-        System.out.println("Database Accessed");
-
-       results.append("Client info: ");
 
        while(resultSet.next())
        {
+           results.append("Client info: ");
            results.append(resultSet.getString(1) + " " + resultSet.getString(2) + "\n" +
-           "Account number: " + resultSet.getString(3));
+           "Account number: " + resultSet.getString(3) + "\n");
        }
 
 
@@ -125,12 +126,12 @@ public class AccessAccount extends JFrame // works
             e.printStackTrace();
         }
 
-        //list social security numbers
+  /*      //list social security numbers
         for(Integer client: clients)
         {
             System.out.println(client);
         }
-
+*/
 
     }
 
