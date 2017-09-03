@@ -136,7 +136,6 @@ public class OpenAccount extends JFrame // works
                 boolean exist = doesAccountExist(socialSecurityInteger);
                 if (exist)
                 {
-                    //System.out.println("Account found");
                     dispose();
                     new AccessAccount(firstName, lastName, social);
                 }
@@ -174,7 +173,7 @@ public class OpenAccount extends JFrame // works
             if(socialSecurityNumberDatabase.equals(socialFromInput))
             {
                 exists = true;
-                System.out.println("Account found for: " + resultSet.getString(1) + resultSet.getString(2));
+                System.out.println("Account found for: " + resultSet.getString(1) + " " + resultSet.getString(2));
                 break;
             }
 
