@@ -15,11 +15,12 @@ public class OpenAccount extends JFrame // works
     private DatabaseConnection connection; // made private
     private boolean informationCorrect = false;
     private JButton buttonSubmit, buttonClear;
-    private JLabel labelFirstName, labelLastName, labelSocial, labelSelection;
+    private JLabel labelFirstName, labelLastName, labelSocial, labelAccountNumber;
     private JPanel panelLabels, panelInputs, panelButtons, panelTop;
     private JTextField inputFirstName;
     private JTextField inputLastName;
     private JTextField inputSocial;
+    private JTextField inputAccountNumber;
 
     //TESTING
 
@@ -33,7 +34,7 @@ public class OpenAccount extends JFrame // works
     {
 
         System.out.println("Open Account");
-            setSize(500, 300);
+            setSize(500, 120);
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             setLocationRelativeTo(null);
             setResizable(false);
@@ -43,11 +44,13 @@ public class OpenAccount extends JFrame // works
             labelFirstName = new JLabel("First Name: ");
             labelLastName = new JLabel("Last Name: ");
             labelSocial = new JLabel("Social Security #: ");
+            labelAccountNumber = new JLabel("Account Number: ");
 
             //INPUTS
             inputFirstName = new JTextField(15);
             inputLastName = new JTextField(15);
             inputSocial = new JTextField(15);
+            inputAccountNumber = new JTextField(15);
 
             //PANELS
             panelButtons = new JPanel();
@@ -75,15 +78,15 @@ public class OpenAccount extends JFrame // works
 
 
             //ADD LABELS TO PANEL - WEST
-            panelLabels.add(labelFirstName);
-            panelLabels.add(labelLastName);
-            panelLabels.add(labelSocial);
+          /*  panelLabels.add(labelFirstName);
+            panelLabels.add(labelLastName);*/
+            panelLabels.add(labelAccountNumber);
 
 
             //ADD INPUTS TO PANEL - EAST
-            panelInputs.add(inputFirstName);
-            panelInputs.add(inputLastName);
-            panelInputs.add(inputSocial);
+        /*    panelInputs.add(inputFirstName);
+            panelInputs.add(inputLastName);*/
+            panelInputs.add(inputAccountNumber);
 
             //ADD BUTTONS TO PANEL - SOUTH
             panelButtons.add(buttonSubmit);
@@ -102,14 +105,15 @@ public class OpenAccount extends JFrame // works
         private void checkClientInfo()
         {
 
-            String firstName = inputFirstName.getText();
+       /*     String firstName = inputFirstName.getText();
             String lastName = inputLastName.getText();
-            String social = inputSocial.getText();
+            String social = inputSocial.getText();*/
+            String accountNumber = inputAccountNumber.getText();
            // System.out.println("social regular:" + social);
 
-            social = social.replaceAll("[- ]", "");
+         //   social = social.replaceAll("[- ]", "");
            // System.out.println("social after regex: " + social);
-
+/*
 
             if(firstName.length() == 0)
             {
@@ -132,21 +136,22 @@ public class OpenAccount extends JFrame // works
                 System.out.println("last name: " + lastName);
                 System.out.println("social length after trim: " + social.trim().length());
                 informationCorrect = true;
-                int socialSecurityInteger = Integer.parseInt(social);
-                boolean exist = doesAccountExist(socialSecurityInteger);
+                */
+                int accountNumberInteger = Integer.parseInt(accountNumber);
+                boolean exist = doesAccountExist(accountNumberInteger);
                 if (exist)
                 {
                     dispose();
-                    new AccessAccount(firstName, lastName, social);
+                    new AccessAccount(accountNumberInteger);
                 }
                 else
                 {
-                    JOptionPane.showMessageDialog(null, "No account found for: " + social);
+                    JOptionPane.showMessageDialog(null, "No account found for: " + accountNumberInteger);
                 }
             }
-        }
 
-    private boolean doesAccountExist(int socialSecurityInteger)
+
+    private boolean doesAccountExist(int accountNumber)
     {
 
         boolean exists = false;
@@ -157,20 +162,22 @@ public class OpenAccount extends JFrame // works
         {
         Statement query = bankConnection.createStatement();
 
-        String sqlQuery = "SELECT first_name, last_name, ssn FROM clients";
+        String sqlQuery = "SELECT first_name, last_name, account_number FROM clients";
 
         ResultSet resultSet = query.executeQuery(sqlQuery);
 
         while(resultSet.next())
         {
 
-            //ssn from database
-           String socialSecurityNumberDatabase = resultSet.getString(3);
-           String socialFromInput = inputSocial.getText();
-            System.out.println("social from database" + socialSecurityNumberDatabase);
-            System.out.println("social from input box" + socialSecurityInteger);
+            //account number from database
+           String accountNumberDatabase = resultSet.getString(3);
+            System.out.println("account number database: " + accountNumberDatabase);
+           String accountFromInput = inputAccountNumber.getText();
+            System.out.println("account number input" + accountFromInput);
+          //  System.out.println("social from database" + socialSecurityNumberDatabase);
+            //System.out.println("social from input box" + socialSecurityInteger);
 
-            if(socialSecurityNumberDatabase.equals(socialFromInput))
+            if(accountNumberDatabase.equals(accountFromInput))
             {
                 exists = true;
                 System.out.println("Account found for: " + resultSet.getString(1) + " " + resultSet.getString(2));
