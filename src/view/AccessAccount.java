@@ -101,7 +101,7 @@ public class AccessAccount extends JFrame // works
         try
         {
 
-        String selectCustomers = "SELECT first_name, last_name, ssn FROM clients where ssn = ?";
+        String selectCustomers = "SELECT first_name, last_name, account_number FROM clients where ssn = ?";
 
         PreparedStatement preparedStatement = bankConnection.prepareStatement(selectCustomers);
 
