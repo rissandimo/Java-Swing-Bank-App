@@ -1,14 +1,16 @@
 package view;
 
+import model.Client;
 import model.DatabaseConnection;
 
 import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class AccessAccount extends JFrame // works
 {
@@ -28,6 +30,8 @@ public class AccessAccount extends JFrame // works
 
     private String firstName, lastName, social;
 
+    private ArrayList<Integer> clients = new ArrayList<>();
+
     //Testing
 
     public static void main(String[] args)
@@ -41,7 +45,7 @@ public class AccessAccount extends JFrame // works
     //made access package-private
      AccessAccount(String clientFirstName, String clientLastName, String clientSocial)
     {
-        System.out.println("Access account");
+        System.out.println("\"Access account\"");
         firstName = clientFirstName;
         lastName = clientLastName;
         social = clientSocial;
@@ -99,24 +103,32 @@ public class AccessAccount extends JFrame // works
         Statement statement = bankConnection.createStatement();
 
 
-        String sqlQuery = "SELECT * FROM clients";
+        String selectCustomers = "SELECT first_name, last_name, ssn FROM clients where ssn = 108741869";
 
 
-        ResultSet resultSet = statement.executeQuery(sqlQuery);
+        ResultSet resultSet = statement.executeQuery(selectCustomers);
 
         System.out.println("Database Accessed");
 
-        System.out.println("Client info: ");
+       results.append("Client info: ");
 
-        while (resultSet.next())
-        {
-            results.append("Client name: \n" + resultSet.getString(1) + " " + resultSet.getString(2) + "   Social Security: " + resultSet.getString(3) + " Account number: " + resultSet.getString(4));
-            results.append("\n");
-        }
+       while(resultSet.next())
+       {
+           results.append(resultSet.getString(1) + " " + resultSet.getString(2) + "\n" +
+           "Account number: " + resultSet.getString(3));
+       }
+
+
         }
         catch(SQLException e)
         {
             e.printStackTrace();
+        }
+
+        //list social security numbers
+        for(Integer client: clients)
+        {
+            System.out.println(client);
         }
 
 
