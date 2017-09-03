@@ -1,16 +1,18 @@
 package view;
 
+import model.DatabaseConnection;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class OpenAccount extends JFrame // works
 {
-    //private int clientAge;
-   // private double clientBalance;
 
-   // private String clientEmail, clientFirstName, clientLastName, clientSocial;
+    private DatabaseConnection connection; // made private
     private boolean informationCorrect = false;
     private JButton buttonSubmit, buttonClear;
     private JLabel labelFirstName, labelLastName, labelSocial, labelSelection;
@@ -93,6 +95,8 @@ public class OpenAccount extends JFrame // works
             add(BorderLayout.SOUTH, panelButtons);
 
             setVisible(true);
+
+            connection = new DatabaseConnection();
         }
 
         private void checkClientInfo()
@@ -101,10 +105,10 @@ public class OpenAccount extends JFrame // works
             String firstName = inputFirstName.getText();
             String lastName = inputLastName.getText();
             String social = inputSocial.getText();
-            System.out.println("social regular:" + social);
+           // System.out.println("social regular:" + social);
 
             social = social.replaceAll("[- ]", "");
-            System.out.println("social after regex: " + social);
+           // System.out.println("social after regex: " + social);
 
 
             if(firstName.length() == 0)
@@ -128,12 +132,64 @@ public class OpenAccount extends JFrame // works
                 System.out.println("last name: " + lastName);
                 System.out.println("social length after trim: " + social.trim().length());
                 informationCorrect = true;
-                dispose();
-                new AccessAccount(firstName, lastName, social);
+                int socialSecurityInteger = Integer.parseInt(social);
+                boolean exist = doesAccountExist(socialSecurityInteger);
+                if (exist)
+                {
+                    //System.out.println("Account found");
+                    dispose();
+                    new AccessAccount(firstName, lastName, social);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "No account found for: " + social);
+                }
+            }
+        }
+
+    private boolean doesAccountExist(int socialSecurityInteger)
+    {
+
+        boolean exists = false;
+        System.out.println("Attempt to connect to database to verify social");
+        Connection bankConnection = connection.createConnectionToDatabase();
+        System.out.println("Connection successfull");
+        try
+        {
+        Statement query = bankConnection.createStatement();
+
+        String sqlQuery = "SELECT first_name, last_name, ssn FROM clients";
+
+        ResultSet resultSet = query.executeQuery(sqlQuery);
+
+        while(resultSet.next())
+        {
+
+            //ssn from database
+           String socialSecurityNumberDatabase = resultSet.getString(3);
+           String socialFromInput = inputSocial.getText();
+            System.out.println("social from database" + socialSecurityNumberDatabase);
+            System.out.println("social from input box" + socialSecurityInteger);
+
+            if(socialSecurityNumberDatabase.equals(socialFromInput))
+            {
+                exists = true;
+                System.out.println("Account found for: " + resultSet.getString(1) + resultSet.getString(2));
+                break;
             }
 
+            else
+                exists = false;
+        }
 
         }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return  exists;
+    }
 
 }// close new account
 
