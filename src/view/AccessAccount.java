@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class AccessAccount extends JFrame // works
+ class AccessAccount extends JFrame // works
 {
     private DatabaseConnection connection; // made private
 
@@ -38,17 +38,17 @@ public class AccessAccount extends JFrame // works
     }
 */
 
-
+    private int accountNumber;
 
 
     //made access package-private
-     AccessAccount(String clientFirstName, String clientLastName, String clientSocial)
+     AccessAccount(int accountNumber)
     {
         System.out.println("\"Access account\"");
-        System.out.println(clientFirstName + clientLastName + clientSocial);
+  /*      System.out.println(clientFirstName + clientLastName + clientSocial);
         firstName = clientFirstName;
         lastName = clientLastName;
-        social = clientSocial;
+        social = clientSocial;*/
 
         //TOP PANEL
         deposit = new JButton("Deposit");
@@ -87,11 +87,11 @@ public class AccessAccount extends JFrame // works
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         connection = new DatabaseConnection();
-        int ssn = Integer.parseInt(social);
-        connectToDatabase(ssn);
+        this.accountNumber = accountNumber;
+        connectToDatabase(accountNumber);
     }
 
-    private void connectToDatabase(int ssn)
+    private void connectToDatabase(int accountNumber)
     {
         System.out.println("Attempt to connect to database");
 
@@ -101,11 +101,11 @@ public class AccessAccount extends JFrame // works
         try
         {
 
-        String selectCustomers = "SELECT first_name, last_name, account_number FROM clients where ssn = ?";
+        String selectCustomers = "SELECT first_name, last_name, account_number FROM clients where account_number = ?";
 
         PreparedStatement preparedStatement = bankConnection.prepareStatement(selectCustomers);
 
-        preparedStatement.setInt(1, ssn);
+        preparedStatement.setInt(1, accountNumber);
 
 
         ResultSet resultSet = preparedStatement.executeQuery();
