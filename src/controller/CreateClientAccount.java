@@ -1,32 +1,34 @@
 package controller;
 
 import model.DatabaseConnection;
-import view.CreateAccount;
+import view.AccessAccount;
 
-import javax.swing.*;
 import java.sql.*;
 
 /**
- * Created by Omid on 9/3/2017.
+ * Connects to the bank database and adds the client if it doesn't exist
+ * It creates an account number, logs into the account, and displays the interface
  */
+
 public class CreateClientAccount
 {
     boolean clientCreated = false;
     private DatabaseConnection connection;
 
-    String firstName, lastName, ssn;
+    private int accountNumber;
+     String firstName, lastName, socialSecurityNumber;
 
-    public CreateClientAccount(String firstName, String lastName, String ssn)
+    public CreateClientAccount(String firstName, String lastName, String socialSecurityNumber)
     {
 
         System.out.println("CreateClientAccount");
         this.firstName = firstName;
         this.lastName = lastName;
-        this.ssn = ssn;
+        this.socialSecurityNumber = socialSecurityNumber;
 
        connection = new DatabaseConnection();
 
-       addClientToDatabase(firstName, lastName, ssn);
+       addClientToDatabase(firstName, lastName, socialSecurityNumber);
     }
 
     public void addClientToDatabase(String firstName,String lastName,String ssn)
@@ -35,7 +37,7 @@ public class CreateClientAccount
         Connection bankConnection = connection.createConnectionToDatabase();
         System.out.println("Connection to database successfull");
 
-        String createClientStatement = "INSERT INTO clients (first_name, last_name, ssn)" +
+        String createClientStatement = "    INSERT INTO clients (first_name, last_name, ssn)" +
                 " values (?, ?, ?)";
 
 
@@ -47,10 +49,29 @@ public class CreateClientAccount
         preparedStatement.setString(2, lastName);
         preparedStatement.setString(3, ssn);
 
-        clientCreated = preparedStatement.execute();
-           // System.out.println("Client added to bank: " + clientCreated); always prints out false - doesn't work
+        clientCreated = preparedStatement.execute(); // returns boolean
+
+         String accountNumberSqlStatement = "SELECT account_number FROM clients WHERE ssn = ?";
+
+         preparedStatement = bankConnection.prepareStatement(accountNumberSqlStatement);
+
+        preparedStatement.setString(1, socialSecurityNumber);
+
+         ResultSet accountNumberResultSet = preparedStatement.executeQuery();
+
+         while(accountNumberResultSet.next())
+         {
+             accountNumber = accountNumberResultSet.getInt(1);
+         }
+
+
+
+            System.out.println("Account number: " + accountNumber);
+
 
         bankConnection.close();
+
+        new AccessAccount(accountNumber);
 
         }
         catch(SQLException e2)
