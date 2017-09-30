@@ -1,15 +1,12 @@
 package view;
 
-import model.Client;
 import model.DatabaseConnection;
-
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Map;
 
- class AccessAccount extends JFrame // works
+ public class AccessAccount extends JFrame // works
 {
     private DatabaseConnection connection; // made private
 
@@ -29,26 +26,15 @@ import java.util.Map;
 
     private ArrayList<Integer> clients = new ArrayList<>();
 
-    //Testing
-
-/*
-    public static void main(String[] args)
-    {
-        new AccessAccount("Omid","Nassir","123456789");
-    }
-*/
 
     private int accountNumber;
 
 
     //made access package-private
-     AccessAccount(int accountNumber)
+    public AccessAccount(int accountNumber)
     {
-        System.out.println("\"Access account\"");
-  /*      System.out.println(clientFirstName + clientLastName + clientSocial);
-        firstName = clientFirstName;
-        lastName = clientLastName;
-        social = clientSocial;*/
+        System.out.println("Access account");
+
 
         //TOP PANEL
         deposit = new JButton("Deposit");
@@ -126,12 +112,6 @@ import java.util.Map;
             e.printStackTrace();
         }
 
-  /*      //list social security numbers
-        for(Integer client: clients)
-        {
-            System.out.println(client);
-        }
-*/
 
     }
 
