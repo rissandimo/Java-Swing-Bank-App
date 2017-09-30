@@ -1,17 +1,27 @@
 package view;
 
+import controller.CreateClientAccount;
+import model.DatabaseConnection;
+
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-//this gets called if the new account info is correct
-//it connect to the database, adds client info to the database
-//then creates the atm screen
-public class CreateAccount extends JFrame // works
+/*
+CreateAccount gets called if the new account info is correct
+It connect to the database, adds client info to the database
+then creates the atm screen
+*/
+
+public class CreateAccount extends JFrame
 {
-    private int clientAge;
-    private double clientBalance;
+/*    private int clientAge;
+    private double clientBalance;*/
 
-    private String clientEmail, clientFirstName, clientLastName, clientSocial;
+  //  private String clientEmail, clientFirstName, clientLastName, clientSocial;
     private JButton buttonSubmit, buttonClear;
     private JLabel labelFirstName, labelLastName, labelSocial, labelTelephone, labelEmail, labelSelection;
     private JPanel panelLabels, panelInputs, panelButtons, panelTop;
@@ -21,6 +31,9 @@ public class CreateAccount extends JFrame // works
     private JTextField inputTelephone;
     private JTextField inputEmail;
 
+    private DatabaseConnection connection;
+    boolean doesClientExist;
+
     //TESTING
 
     public static void main(String[] args)
@@ -28,8 +41,7 @@ public class CreateAccount extends JFrame // works
         new CreateAccount();
     }
 
-    //made access private
-    private CreateAccount()
+     CreateAccount()
     {
 
         setSize(350, 250);
@@ -63,6 +75,7 @@ public class CreateAccount extends JFrame // works
         //BUTTONS
         buttonClear = new JButton("Clear");
         buttonSubmit = new JButton("Submit");
+        buttonSubmit.addActionListener(e -> checkClientInfo());
 
 
         //DIMENSION
@@ -105,9 +118,87 @@ public class CreateAccount extends JFrame // works
         add(BorderLayout.SOUTH, panelButtons);
 
         setVisible(true);
+
+        connection = new DatabaseConnection();
     }
 
-    public String getClientEmail()
+    private void checkClientInfo()
+    {
+        boolean informationCorrect;
+        String firstName = inputFirstName.getText();
+        String lastName = inputLastName.getText();
+        String social = inputSocial.getText();
+        System.out.println("social regular:" + social);
+
+        social = social.replaceAll("[- ]", "");
+        System.out.println("social after regex: " + social);
+
+
+        if (firstName.length() == 0)
+        {
+            JOptionPane.showMessageDialog(null, "First name invalid");
+            System.out.println("first name length: " + firstName.length());
+        } else if (lastName.length() == 0)
+        {
+            JOptionPane.showMessageDialog(null, "Last name invalid");
+            System.out.println("last name length: " + lastName.length());
+        } else if (social.trim().length() != 9)
+        {
+            JOptionPane.showMessageDialog(null, "Social Security Number invalid");
+        } else
+        {
+            System.out.println("Information correct");
+            System.out.println("first name: " + firstName);
+            System.out.println("last name: " + lastName);
+            System.out.println("social length after trim: " + social.trim().length());
+            informationCorrect = true;
+
+            if (informationCorrect)
+            {
+                doesClientExist = doesClientExist(social);
+                if(!doesClientExist)
+                {
+                    dispose();
+                    new CreateClientAccount(firstName, lastName, social);
+                }
+
+            }
+
+        }
+
+    }
+
+    private boolean doesClientExist(String social)
+    {
+        System.out.println("doesClientExist");
+        Connection bankConnection = connection.createConnectionToDatabase();
+
+        try
+        {
+
+            Statement statement = bankConnection.createStatement();
+
+            ResultSet ssnResultSet = statement.executeQuery("SELECT ssn FROM clients");
+
+            while(ssnResultSet.next())
+            {
+                System.out.println("SSN found: " + ssnResultSet.getString(1));
+                if(ssnResultSet.getString(1).equals(social))
+                {
+                    JOptionPane.showMessageDialog(null, "Social already exists");
+                    return true;
+                }
+
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+    return false;
+    }
+
+/*    public String getClientEmail()
     {
         return clientEmail;
     }
@@ -125,7 +216,7 @@ public class CreateAccount extends JFrame // works
     public String getClientSocial()
     {
         return clientSocial;
-    }
+    }*/
 
 
 }
