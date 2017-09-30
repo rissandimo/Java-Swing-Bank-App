@@ -33,6 +33,11 @@ public class WelcomeScreen extends JFrame
         });
 
         buttonCreateAccount = new JButton("Create Account");
+        buttonCreateAccount.addActionListener(e ->
+        {
+            dispose();
+            new CreateAccount();
+        });
 
         //LABELS
 
