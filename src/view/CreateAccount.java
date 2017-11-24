@@ -13,7 +13,7 @@ import java.sql.Statement;
 /*
 CreateAccount gets called if the new account info is correct
 It connect to the database, adds client info to the database
-then creates the atm screen
+then creates the atm screen.
 */
 
 public class CreateAccount extends JFrame
