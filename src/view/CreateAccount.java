@@ -32,7 +32,7 @@ public class CreateAccount extends JFrame
     private JTextField inputEmail;
 
     private DatabaseConnection connection;
-    boolean doesClientExist;
+    private boolean doesClientExist;
 
     //TESTING
 
@@ -145,13 +145,15 @@ public class CreateAccount extends JFrame
         } else if (social.trim().length() != 9)
         {
             JOptionPane.showMessageDialog(null, "Social Security Number invalid");
-        } else
+        }
+        else
         {
             System.out.println("Information correct");
             System.out.println("first name: " + firstName);
             System.out.println("last name: " + lastName);
             System.out.println("social length after trim: " + social.trim().length());
             informationCorrect = true;
+
 
             if (informationCorrect)
             {
@@ -198,25 +200,6 @@ public class CreateAccount extends JFrame
     return false;
     }
 
-/*    public String getClientEmail()
-    {
-        return clientEmail;
-    }
-
-    public String getClientFirstName()
-    {
-        return clientFirstName;
-    }
-
-    public String getClientLastName()
-    {
-        return clientLastName;
-    }
-
-    public String getClientSocial()
-    {
-        return clientSocial;
-    }*/
 
 
 }

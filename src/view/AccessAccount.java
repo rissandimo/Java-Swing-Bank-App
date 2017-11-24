@@ -3,12 +3,19 @@ package view;
 import model.DatabaseConnection;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.sql.*;
-import java.util.ArrayList;
 
  public class AccessAccount extends JFrame // works
 {
+
+    // main method is for testing purposes
+    public static void main(String[] args)
+    {
+        new AccessAccount(1000032);
+    }
     private DatabaseConnection connection; // made private
+    private TransactionActionListener transactionActionListener;
 
     private JButton checkAcctInfo;
     private JButton deposit;
@@ -20,12 +27,8 @@ import java.util.ArrayList;
     private JPanel panelCenter;
     private JPanel panelTop;
 
-    private JTextArea results;
-
-    private String firstName, lastName, social;
-
-    private ArrayList<Integer> clients = new ArrayList<>();
-
+    private JTextField input;
+    static JTextArea results;
 
     private int accountNumber;
 
@@ -35,12 +38,28 @@ import java.util.ArrayList;
     {
         System.out.println("Access account");
 
+        createView();
 
-        //TOP PANEL
+        connection = new DatabaseConnection();
+        connectToDatabase(accountNumber);
+
+        this.accountNumber = accountNumber;
+
+    }
+
+    private void createView()
+    {
+        transactionActionListener = new TransactionActionListener();
+        //TOP PANEL - BUTTONS
         deposit = new JButton("Deposit");
         withdrawal = new JButton("Withdrawal");
         checkAcctInfo = new JButton("Account Info");
         logOut = new JButton("Log Out");
+
+        deposit.addActionListener(transactionActionListener);
+        withdrawal.addActionListener(transactionActionListener);
+        checkAcctInfo.addActionListener(transactionActionListener);
+        logOut.addActionListener(transactionActionListener);
 
         panelTop = new JPanel();
         panelTop.add(deposit);
@@ -50,7 +69,7 @@ import java.util.ArrayList;
 
         add(panelTop, BorderLayout.NORTH);
 
-        //CENTER PANEL
+        //CENTER PANEL - Text Area
 
         results = new JTextArea(50,50);
         panelCenter = new JPanel();
@@ -59,9 +78,13 @@ import java.util.ArrayList;
         add(panelCenter, BorderLayout.CENTER);
 
 
-        //BOTTOM PANEL
+        //BOTTOM PANEL - Submit Buttons & Text Input
+        input = new JTextField(15);
+
         submit = new JButton("Submit");
+
         panelBottom = new JPanel();
+        panelBottom.add(input);
         panelBottom.add(submit);
         add(panelBottom, BorderLayout.SOUTH);
 
@@ -71,10 +94,6 @@ import java.util.ArrayList;
         setTitle("Access account");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        connection = new DatabaseConnection();
-        this.accountNumber = accountNumber;
-        connectToDatabase(accountNumber);
     }
 
     private void connectToDatabase(int accountNumber)
@@ -96,8 +115,6 @@ import java.util.ArrayList;
 
         ResultSet resultSet = preparedStatement.executeQuery();
 
-
-
        while(resultSet.next())
        {
            results.append("Client info: ");
@@ -116,4 +133,28 @@ import java.util.ArrayList;
     }
 
 
+}
+
+class TransactionActionListener implements ActionListener
+{
+
+    private static String actionPerformed;
+
+    public void actionPerformed(ActionEvent e)
+    {
+
+
+        if(e.getActionCommand().equals("Deposit"))
+        {
+            AccessAccount.results.append("Please enter amount to deposit below \n");
+            actionPerformed = e.getActionCommand();
+        }
+
+        else if(e.getActionCommand().equals("Withdrawal"))
+        {
+            AccessAccount.results.append("Please enter amount to withdrawal below \n");
+            actionPerformed = e.getActionCommand();
+        }
+
+    }
 }
