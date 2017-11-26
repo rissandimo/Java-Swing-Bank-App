@@ -14,7 +14,8 @@ import java.sql.*;
     {
         new AccessAccount(1000032);
     }
-    private DatabaseConnection connection; // made private
+    private DatabaseConnection databaseConnection; // made private
+    private Connection sqlConnection;
     private TransactionActionListener transactionActionListener;
 
     private JButton checkAcctInfo;
@@ -40,7 +41,7 @@ import java.sql.*;
 
         createView();
 
-        connection = new DatabaseConnection();
+        databaseConnection = new DatabaseConnection();
         connectToDatabase(accountNumber);
 
         this.accountNumber = accountNumber;
@@ -83,6 +84,12 @@ import java.sql.*;
 
         submit = new JButton("Submit");
 
+        submit.addActionListener(e ->
+        {
+            if(TransactionActionListener.actionPerformed.equals("Deposit"))
+                deposit(Double.parseDouble(input.getText()));
+        });
+
         panelBottom = new JPanel();
         panelBottom.add(input);
         panelBottom.add(submit);
@@ -96,12 +103,42 @@ import java.sql.*;
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
+    private void deposit(double depositAmount)
+    {
+        System.out.println("deposit amount: " + depositAmount);
+       sqlConnection = databaseConnection.createConnectionToDatabase();
+
+       String depositStatement = "UPDATE checking_account SET balance = balance + ? WHERE account_number = ?";
+
+       //String createClientStatement = "    INSERT INTO clients (first_name, last_name, ssn)" +
+       // " values (?, ?, ?)";
+
+       try
+       {
+
+       PreparedStatement preparedStatement = sqlConnection.prepareStatement(depositStatement);
+
+       preparedStatement.setDouble(1, depositAmount);
+       preparedStatement.setInt(2, accountNumber);
+
+        boolean depositSuccessfull = preparedStatement.execute();
+
+           results.append("$"+ depositAmount + " deposited into account: " + accountNumber);
+
+       }
+       catch(SQLException sqlE)
+       {
+           sqlE.printStackTrace();
+       }
+
+    }
+
     private void connectToDatabase(int accountNumber)
     {
         System.out.println("Attempt to connect to database");
 
-        Connection bankConnection = connection.createConnectionToDatabase();
-        System.out.println("connection successful");
+        Connection bankConnection = databaseConnection.createConnectionToDatabase();
+        System.out.println("databaseConnection successful");
 
         try
         {
@@ -138,7 +175,7 @@ import java.sql.*;
 class TransactionActionListener implements ActionListener
 {
 
-    private static String actionPerformed;
+     static String actionPerformed;
 
     public void actionPerformed(ActionEvent e)
     {
