@@ -21,24 +21,24 @@ public class CreateClientAccount
         }*/
     private DatabaseConnection bankConnection;
 
-    private static final int ACCOUNT_NUMBER = 1000000;
+    private static int ACCOUNT_NUMBER;
 
     private String firstName, lastName, social;
 
     //  private int accountNumbers[] = new int[10];
 
-    public CreateClientAccount(String firstName, String lastName, String social)
+    public CreateClientAccount(String firstName, String lastName, String social, int account_number)
     {
         this.firstName = firstName;
         this.lastName = lastName;
         this.social = social;
-
+        ACCOUNT_NUMBER = ++account_number;
         bankConnection = new DatabaseConnection();
 
-        addClientInfo(firstName, lastName, social);
+        addClientInfo(firstName, lastName, social, ACCOUNT_NUMBER);
     }
 
-    private void addClientInfo(String firstName, String lastName, String social)
+    private void addClientInfo(String firstName, String lastName, String social, int ACCOUNT_NUMBER)
     {
         System.out.println("Add client info");
 
