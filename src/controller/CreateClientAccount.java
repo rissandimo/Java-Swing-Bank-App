@@ -56,11 +56,12 @@ public class CreateClientAccount
                 preparedStatementClient.setInt(4, ACCOUNT_NUMBER);
 
                 System.out.println("client sql statement executing");
-                boolean clientCreated = preparedStatementClient.execute();
 
-                //preparedStatementClient closes here
+                preparedStatementClient.execute();
 
-                if (clientCreated) System.out.println("Client created successfully");
+                 System.out.println("Client created successfully");
+
+                addCheckingInfo(ACCOUNT_NUMBER, 0.0, social);
             }
 
         } catch (SQLException e)
@@ -69,5 +70,32 @@ public class CreateClientAccount
         }
     }// end add client
 
+    private void addCheckingInfo(int accountNumber, double balance, String social)
+    {
+        System.out.println("add checking info");
+        Connection connection = bankConnection.createConnectionToDatabase();
 
+        try
+        {
+
+        String checkingStatement = "INSERT INTO checking_account (account_number, account_balance, social) values(?,?,?)";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(checkingStatement);
+
+        preparedStatement.setInt(1, ACCOUNT_NUMBER);
+        preparedStatement.setDouble(2,0.0);
+        preparedStatement.setString(3, social);
+
+        preparedStatement.execute();
+
+            System.out.println("Checking account created");
+
+        new AccessAccount(ACCOUNT_NUMBER);
+        }
+
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
 }
