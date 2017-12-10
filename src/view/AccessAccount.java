@@ -10,10 +10,10 @@ import java.sql.*;
 {
 
     // main method is for testing purposes
-    public static void main(String[] args)
+ /*   public static void main(String[] args)
     {
         new AccessAccount(1000032);
-    }
+    }*/
     private DatabaseConnection databaseConnection; // made private
     private Connection sqlConnection;
     private TransactionActionListener transactionActionListener;
@@ -123,7 +123,7 @@ import java.sql.*;
 
         boolean depositSuccessfull = preparedStatement.execute();
 
-           results.append("$"+ depositAmount + " deposited into account: " + accountNumber);
+           results.append("$"+ depositAmount + " deposited into account# : \n" + accountNumber);
 
        }
        catch(SQLException sqlE)
