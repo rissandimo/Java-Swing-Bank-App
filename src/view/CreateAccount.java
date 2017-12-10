@@ -21,7 +21,7 @@ public class CreateAccount extends JFrame
 /*    private int clientAge;
     private double clientBalance;*/
 
-  //  private String clientEmail, clientFirstName, clientLastName, clientSocial;
+    //  private String clientEmail, clientFirstName, clientLastName, clientSocial;
     private JButton buttonSubmit, buttonClear;
     private JLabel labelFirstName, labelLastName, labelSocial, labelTelephone, labelEmail, labelSelection;
     private JPanel panelLabels, panelInputs, panelButtons, panelTop;
@@ -41,7 +41,7 @@ public class CreateAccount extends JFrame
         new CreateAccount();
     }
 
-     CreateAccount()
+    CreateAccount()
     {
 
         setSize(350, 250);
@@ -124,6 +124,7 @@ public class CreateAccount extends JFrame
 
     private void checkClientInfo()
     {
+        int account_number = getBiggestAccountNumber();
         boolean informationCorrect;
         String firstName = inputFirstName.getText();
         String lastName = inputLastName.getText();
@@ -161,11 +162,10 @@ public class CreateAccount extends JFrame
                 if(!doesClientExist)
                 {
                     dispose();
-                    new CreateClientAccount(firstName, lastName, social);
+                    new CreateClientAccount(firstName, lastName, social, account_number);
                 }
 
             }
-
         }
 
     }
@@ -180,7 +180,7 @@ public class CreateAccount extends JFrame
 
             Statement statement = bankConnection.createStatement();
 
-            ResultSet ssnResultSet = statement.executeQuery("SELECT ssn FROM clients");
+            ResultSet ssnResultSet = statement.executeQuery("SELECT social FROM clients");
 
             while(ssnResultSet.next())
             {
@@ -190,16 +190,38 @@ public class CreateAccount extends JFrame
                     JOptionPane.showMessageDialog(null, "Social already exists");
                     return true;
                 }
-
             }
         }
         catch(SQLException e)
         {
             e.printStackTrace();
         }
-    return false;
+        return false;
+    }// end does client exist
+
+    private int getBiggestAccountNumber()
+    {
+        Connection bankConnection = connection.createConnectionToDatabase();
+
+        int largestAccountNumber = 0;
+
+        try
+        {
+            Statement statement = bankConnection.createStatement();
+
+            ResultSet resultSetlargestAccountNumber = statement.executeQuery("SELECT account_number from clients");
+
+            while(resultSetlargestAccountNumber.next())
+            {
+                largestAccountNumber = resultSetlargestAccountNumber.getInt(1);
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+        System.out.println("largest account number:" + largestAccountNumber);
+            return largestAccountNumber;
     }
-
-
 
 }
