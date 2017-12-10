@@ -28,9 +28,9 @@ public class DatabaseConnection
         {
             //Class.forName("com.mysql.jdbc.Driver");
             //1. Create connection
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/bank?autoReconnect=true&useSSL=false", "root", "password");
-
-
+            connection = DriverManager.getConnection("jdbc:mysql://local" +
+                    "host/bank?autoReconnect=true&useSSL=false", "root", "");
+            //create bank database schema
 
         }
         catch (SQLException s)
