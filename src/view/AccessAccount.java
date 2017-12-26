@@ -1,20 +1,23 @@
 package view;
 
 import model.DatabaseConnection;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 
- public class AccessAccount extends JFrame // works
+ public class AccessAccount extends JFrame
 {
 
-    // main method is for testing purposes
- /*   public static void main(String[] args)
+    /*
+    // TESTING PURPOSES
+    public static void main(String[] args)
     {
         new AccessAccount(1000032);
     }*/
-    private DatabaseConnection databaseConnection; // made private
+
+    private DatabaseConnection databaseConnection;
     private Connection sqlConnection;
     private TransactionActionListener transactionActionListener;
 
@@ -33,11 +36,9 @@ import java.sql.*;
 
     private int accountNumber;
 
-
-    //made access package-private
     public AccessAccount(int accountNumber)
     {
-        System.out.println("Access account");
+        System.out.println("AccessAccount");
 
         createView();
 
@@ -45,22 +46,16 @@ import java.sql.*;
         connectToDatabase(accountNumber);
 
         this.accountNumber = accountNumber;
-
     }
 
     private void createView()
     {
-        transactionActionListener = new TransactionActionListener();
+
         //TOP PANEL - BUTTONS
         deposit = new JButton("Deposit");
         withdrawal = new JButton("Withdrawal");
         checkAcctInfo = new JButton("Account Info");
         logOut = new JButton("Log Out");
-
-        deposit.addActionListener(transactionActionListener);
-        withdrawal.addActionListener(transactionActionListener);
-        checkAcctInfo.addActionListener(transactionActionListener);
-        logOut.addActionListener(transactionActionListener);
 
         panelTop = new JPanel();
         panelTop.add(deposit);
@@ -70,25 +65,34 @@ import java.sql.*;
 
         add(panelTop, BorderLayout.NORTH);
 
-        //CENTER PANEL - Text Area
+        deposit.addActionListener(transactionActionListener);
+        withdrawal.addActionListener(transactionActionListener);
+        checkAcctInfo.addActionListener(transactionActionListener);
+        logOut.addActionListener(transactionActionListener);
 
+        //CENTER PANEL - Text Area
         results = new JTextArea(50,50);
         panelCenter = new JPanel();
         panelCenter.add(results);
 
         add(panelCenter, BorderLayout.CENTER);
 
-
         //BOTTOM PANEL - Submit Buttons & Text Input
         input = new JTextField(15);
-
         submit = new JButton("Submit");
-
         submit.addActionListener(e ->
+        {
+            if(e.getActionCommand().equals("depsoit"))
+                System.out.println("Deposit");
+            else if(e.getActionCommand().equals("withdrawal"))
+                System.out.println("Withdrawl");
+        });
+
+/*        submit.addActionListener(e ->
         {
             if(TransactionActionListener.actionPerformed.equals("Deposit"))
                 deposit(Double.parseDouble(input.getText()));
-        });
+        });*/
 
         panelBottom = new JPanel();
         panelBottom.add(input);
@@ -175,11 +179,10 @@ import java.sql.*;
 class TransactionActionListener implements ActionListener
 {
 
-     static String actionPerformed;
+     private static String actionPerformed;
 
     public void actionPerformed(ActionEvent e)
     {
-
 
         if(e.getActionCommand().equals("Deposit"))
         {
