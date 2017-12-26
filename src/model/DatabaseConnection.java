@@ -5,33 +5,19 @@ import java.sql.*;
 public class DatabaseConnection
 {
     private Connection connection = null;
-    private PreparedStatement preparedStatement;
-    private ResultSet resultSet;
 
-    private static String first_name;
-    private static String last_name;
-    private static String ssn;
-
+/*
+    //TESTING PURPOSES
     public static void main(String[] args)
     {
         new DatabaseConnection().createConnectionToDatabase();
-    }
-
-    public DatabaseConnection()
-    {
-    }
-
+    }*/
 
     public Connection createConnectionToDatabase()
     {
         try
         {
-            //Class.forName("com.mysql.jdbc.Driver");
-            //1. Create connection
-            connection = DriverManager.getConnection("jdbc:mysql://local" +
-                    "host/bank?autoReconnect=true&useSSL=false", "root", "");
-            //create bank database schema
-
+            connection = DriverManager.getConnection("host/bank?autoReconnect=true&useSSL=false", "root", "");
         }
         catch (SQLException s)
         {
@@ -39,6 +25,4 @@ public class DatabaseConnection
         }
         return connection;
     }
-
-
 }
