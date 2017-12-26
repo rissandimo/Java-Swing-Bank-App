@@ -17,7 +17,7 @@ public class DatabaseConnection
     {
         try
         {
-            connection = DriverManager.getConnection("host/bank?autoReconnect=true&useSSL=false", "root", "");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/bank?autoReconnect=true&useSSL=false", "root", "");
         }
         catch (SQLException s)
         {
