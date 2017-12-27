@@ -10,10 +10,10 @@ import java.sql.*;
  public class AccessAccount extends JFrame
 {
 
-    public static void main(String[] args)
+/*    public static void main(String[] args)
     {
         new AccessAccount(1);
-    }
+    }*/
 
     private DatabaseConnection databaseConnection;
     private Connection sqlConnection;
@@ -53,6 +53,7 @@ import java.sql.*;
         deposit = new JButton("Deposit");
         withdrawal = new JButton("Withdrawal");
         checkAcctInfo = new JButton("Account Info");
+        checkAcctInfo.addActionListener(e-> checkAccountInfo());
         logOut = new JButton("Log Out");
 
         panelTop = new JPanel();
@@ -66,6 +67,7 @@ import java.sql.*;
 
         transactionActionListener = new TransactionActionListener();
 
+        checkAcctInfo.addActionListener(transactionActionListener);
         deposit.addActionListener(transactionActionListener);
         withdrawal.addActionListener(transactionActionListener);
         checkAcctInfo.addActionListener(transactionActionListener);
@@ -107,9 +109,37 @@ import java.sql.*;
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
+    private void checkAccountInfo()
+    {
+        System.out.println("checkAccountInfo");
+
+        sqlConnection = databaseConnection.createConnectionToDatabase();
+
+        String accountInfoStatement = "SELECT account_balance as balance from checking_account where account_number = ?";
+
+        try
+        {
+
+            PreparedStatement preparedStatement = sqlConnection.prepareStatement(accountInfoStatement);
+
+            preparedStatement.setInt(1, accountNumber);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next())
+            {
+                AccessAccount.results.append("Balance: " + resultSet.getDouble(1));
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     private void deposit(double depositAmount)
     {
-        System.out.println("deposit amount: " + depositAmount);
+        results.append("Please enter amount to deposit");
 
         //connect to db and perform deposit
        sqlConnection = databaseConnection.createConnectionToDatabase();
@@ -183,21 +213,13 @@ class TransactionActionListener implements ActionListener
     {
         System.out.println("TransactionActionListener");
 
-        if(e.getActionCommand().equals("Deposit"))
-        {
-            System.out.println("deposit button pressed");
-            AccessAccount.results.append("Please enter amount to deposit below \n");
-            actionPerformed = e.getActionCommand();
-        }
-
-        else if(e.getActionCommand().equals("Withdrawal"))
-        {
-            AccessAccount.results.append("Please enter amount to withdrawal below \n");
-            actionPerformed = e.getActionCommand();
-        }
+        if(e.getActionCommand().equals("Deposit")) {AccessAccount.results.append("Enter amount to deposit");}
+        if(e.getActionCommand().equals("Withdrawal")) {AccessAccount.results.append("Enter amount to withdraw");}
 
     }
 
 }
+
+
 
 
