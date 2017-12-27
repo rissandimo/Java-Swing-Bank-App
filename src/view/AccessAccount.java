@@ -10,12 +10,10 @@ import java.sql.*;
  public class AccessAccount extends JFrame
 {
 
-    /*
-    // TESTING PURPOSES
     public static void main(String[] args)
     {
-        new AccessAccount(1000032);
-    }*/
+        new AccessAccount(1);
+    }
 
     private DatabaseConnection databaseConnection;
     private Connection sqlConnection;
@@ -65,6 +63,9 @@ import java.sql.*;
 
         add(panelTop, BorderLayout.NORTH);
 
+
+        transactionActionListener = new TransactionActionListener();
+
         deposit.addActionListener(transactionActionListener);
         withdrawal.addActionListener(transactionActionListener);
         checkAcctInfo.addActionListener(transactionActionListener);
@@ -82,10 +83,9 @@ import java.sql.*;
         submit = new JButton("Submit");
         submit.addActionListener(e ->
         {
-            if(e.getActionCommand().equals("depsoit"))
-                System.out.println("Deposit");
-            else if(e.getActionCommand().equals("withdrawal"))
-                System.out.println("Withdrawl");
+            if(TransactionActionListener.actionPerformed.equals("Deposit"))
+               deposit(Integer.parseInt(input.getText()));
+
         });
 
 /*        submit.addActionListener(e ->
@@ -110,12 +110,11 @@ import java.sql.*;
     private void deposit(double depositAmount)
     {
         System.out.println("deposit amount: " + depositAmount);
+
+        //connect to db and perform deposit
        sqlConnection = databaseConnection.createConnectionToDatabase();
 
-       String depositStatement = "UPDATE checking_account SET balance = balance + ? WHERE account_number = ?";
-
-       //String createClientStatement = "    INSERT INTO clients (first_name, last_name, ssn)" +
-       // " values (?, ?, ?)";
+       String depositStatement = "UPDATE checking_account SET account_balance = account_balance + ? WHERE account_number = ?";
 
        try
        {
@@ -125,17 +124,15 @@ import java.sql.*;
        preparedStatement.setDouble(1, depositAmount);
        preparedStatement.setInt(2, accountNumber);
 
-        boolean depositSuccessfull = preparedStatement.execute();
+       preparedStatement.execute();
 
-           results.append("$"+ depositAmount + " deposited into account# : \n" + accountNumber);
-
+       results.append("$"+ depositAmount + " deposited into account# :" + accountNumber);
        }
        catch(SQLException sqlE)
        {
            sqlE.printStackTrace();
        }
-
-    }
+    } // close deposit
 
     private void connectToDatabase(int accountNumber)
     {
@@ -171,21 +168,24 @@ import java.sql.*;
         }
 
 
-    }
+    }// close connectToDatabase
 
 
-}
+}// close AccessAccount
+
 
 class TransactionActionListener implements ActionListener
 {
 
-     private static String actionPerformed;
+    static String actionPerformed;
 
     public void actionPerformed(ActionEvent e)
     {
+        System.out.println("TransactionActionListener");
 
         if(e.getActionCommand().equals("Deposit"))
         {
+            System.out.println("deposit button pressed");
             AccessAccount.results.append("Please enter amount to deposit below \n");
             actionPerformed = e.getActionCommand();
         }
@@ -197,4 +197,7 @@ class TransactionActionListener implements ActionListener
         }
 
     }
+
 }
+
+
