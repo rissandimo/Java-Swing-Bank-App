@@ -90,11 +90,6 @@ import java.sql.*;
 
         });
 
-/*        submit.addActionListener(e ->
-        {
-            if(TransactionActionListener.actionPerformed.equals("Deposit"))
-                deposit(Double.parseDouble(input.getText()));
-        });*/
 
         panelBottom = new JPanel();
         panelBottom.add(input);
@@ -128,7 +123,7 @@ import java.sql.*;
 
             while (resultSet.next())
             {
-                AccessAccount.results.append("Balance: " + resultSet.getDouble(1));
+                AccessAccount.results.append("Balance: " + resultSet.getDouble(1) + "\n");
             }
         }
         catch(SQLException e)
@@ -139,7 +134,6 @@ import java.sql.*;
 
     private void deposit(double depositAmount)
     {
-        results.append("Please enter amount to deposit");
 
         //connect to db and perform deposit
        sqlConnection = databaseConnection.createConnectionToDatabase();
@@ -156,7 +150,7 @@ import java.sql.*;
 
        preparedStatement.execute();
 
-       results.append("$"+ depositAmount + " deposited into account# :" + accountNumber);
+       results.append("$"+ depositAmount + " deposited into account # :" + accountNumber);
        }
        catch(SQLException sqlE)
        {
@@ -213,7 +207,11 @@ class TransactionActionListener implements ActionListener
     {
         System.out.println("TransactionActionListener");
 
-        if(e.getActionCommand().equals("Deposit")) {AccessAccount.results.append("Enter amount to deposit");}
+        if(e.getActionCommand().equals("Deposit"))
+        {
+            AccessAccount.results.append("Enter amount to deposit" + "\n");
+            actionPerformed = "Deposit";
+        }
         if(e.getActionCommand().equals("Withdrawal")) {AccessAccount.results.append("Enter amount to withdraw");}
 
     }
