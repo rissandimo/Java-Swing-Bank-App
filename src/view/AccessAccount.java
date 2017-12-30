@@ -150,7 +150,7 @@ import java.sql.*;
 
        preparedStatement.execute();
 
-       results.append("$"+ depositAmount + " deposited into account # :" + accountNumber);
+       results.append("$"+ depositAmount + " deposited into account # :" + accountNumber + "\n");
        }
        catch(SQLException sqlE)
        {
