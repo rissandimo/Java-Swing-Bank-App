@@ -16,6 +16,7 @@ import java.sql.*;
     }*/
     private DatabaseConnection databaseConnection; // made private
     private Connection sqlConnection;
+    private PreparedStatement preparedStatement;
     private TransactionActionListener transactionActionListener;
 
     private JButton checkAcctInfo;
@@ -110,8 +111,6 @@ import java.sql.*;
 
        String depositStatement = "UPDATE checking_account SET balance = balance + ? WHERE account_number = ?";
 
-       //String createClientStatement = "    INSERT INTO clients (first_name, last_name, ssn)" +
-       // " values (?, ?, ?)";
 
        try
        {
@@ -121,7 +120,7 @@ import java.sql.*;
        preparedStatement.setDouble(1, depositAmount);
        preparedStatement.setInt(2, accountNumber);
 
-        boolean depositSuccessfull = preparedStatement.execute();
+       preparedStatement.execute();
 
            results.append("$"+ depositAmount + " deposited into account# : \n" + accountNumber);
 
@@ -133,6 +132,41 @@ import java.sql.*;
 
     }
 
+    private void withdrawal(double withdrawalAmount)
+    {
+        System.out.println("Withdrawal amount: " + withdrawalAmount);
+
+        sqlConnection = databaseConnection.createConnectionToDatabase();
+
+        String withdrawalStatement = "UPDATE checking_account SET balance = balance - ? WHERE account_number = ?";
+        String checkBalanceStatement = "SELECT balance FROM checking_account where account_number = ?";
+
+        try
+        {
+            preparedStatement = sqlConnection.prepareStatement(checkBalanceStatement);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        double currentBalance = resultSet.getDouble(1);
+
+        if(currentBalance - withdrawalAmount >= 0) // if there are sufficient funds
+        {
+            preparedStatement = sqlConnection.prepareStatement(withdrawalStatement);
+        }
+
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+    }
+
     private void connectToDatabase(int accountNumber)
     {
         System.out.println("Attempt to connect to database");
@@ -140,10 +174,9 @@ import java.sql.*;
         Connection bankConnection = databaseConnection.createConnectionToDatabase();
         System.out.println("databaseConnection successful");
 
+        String selectCustomers = "SELECT first_name, last_name, account_number FROM clients where account_number = ?";
         try
         {
-
-        String selectCustomers = "SELECT first_name, last_name, account_number FROM clients where account_number = ?";
 
         PreparedStatement preparedStatement = bankConnection.prepareStatement(selectCustomers);
 
@@ -166,10 +199,7 @@ import java.sql.*;
             e.printStackTrace();
         }
 
-
     }
-
-
 }
 
 class TransactionActionListener implements ActionListener
