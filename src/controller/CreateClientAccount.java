@@ -12,27 +12,24 @@ import java.sql.*;
 
 public class CreateClientAccount
 {
-
     //TESTING PURPOSES
 
-    /*    public static void main(String[] args)
-        {
-            new CreateClientAccount();
-        }*/
+    /*public static void main(String[] args)
+     {
+         new CreateClientAccount();
+     }*/
     private DatabaseConnection bankConnection;
 
     private static int ACCOUNT_NUMBER;
 
     private String firstName, lastName, social;
 
-    //  private int accountNumbers[] = new int[10];
-
-    public CreateClientAccount(String firstName, String lastName, String social, int account_number)
+    public CreateClientAccount(String firstName, String lastName, String social, int accountNumber)
     {
         this.firstName = firstName;
         this.lastName = lastName;
         this.social = social;
-        ACCOUNT_NUMBER = ++account_number;
+        ACCOUNT_NUMBER = ++accountNumber; //increments acct for next user
         bankConnection = new DatabaseConnection();
 
         addClientInfo(firstName, lastName, social, ACCOUNT_NUMBER);
@@ -40,7 +37,7 @@ public class CreateClientAccount
 
     private void addClientInfo(String firstName, String lastName, String social, int ACCOUNT_NUMBER)
     {
-        System.out.println("Add client info");
+        System.out.println("addClientInfo()");
 
         try
         {
@@ -59,25 +56,24 @@ public class CreateClientAccount
 
                 preparedStatementClient.execute();
 
-                 System.out.println("Client created successfully");
+                System.out.println("Client created successfully");
 
                 addCheckingInfo(ACCOUNT_NUMBER, 0.0, social);
             }
-
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
         }
-    }// end add client
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+            }
+    }// close addClientInfo
 
     private void addCheckingInfo(int accountNumber, double balance, String social)
     {
-        System.out.println("add checking info");
+        System.out.println("addCheckingInfo()");
         Connection connection = bankConnection.createConnectionToDatabase();
 
         try
         {
-
         String checkingStatement = "INSERT INTO checking_account (account_number, account_balance, social) values(?,?,?)";
 
         PreparedStatement preparedStatement = connection.prepareStatement(checkingStatement);
@@ -88,11 +84,10 @@ public class CreateClientAccount
 
         preparedStatement.execute();
 
-            System.out.println("Checking account created");
+        System.out.println("Checking account created");
 
         new AccessAccount(ACCOUNT_NUMBER);
         }
-
         catch(SQLException e)
         {
             e.printStackTrace();
