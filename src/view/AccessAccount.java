@@ -32,7 +32,8 @@ import java.sql.*;
     private JTextField input;
     static JTextArea results;
 
-    private int accountNumber;
+    private int     accountNumber;
+    private double  accountBalance;
 
     public AccessAccount(int accountNumber)
     {
@@ -87,6 +88,8 @@ import java.sql.*;
         {
             if(TransactionActionListener.actionPerformed.equals("Deposit"))
                deposit(Integer.parseInt(input.getText()));
+            if(TransactionActionListener.actionPerformed.equals("Withdrawal"))
+                enoughFunds();
 
         });
 
@@ -150,13 +153,81 @@ import java.sql.*;
 
        preparedStatement.execute();
 
-       results.append("$"+ depositAmount + " deposited into account # :" + accountNumber);
+       results.append("$"+ depositAmount + " deposited into account # :" + accountNumber + "\n");
        }
        catch(SQLException sqlE)
        {
            sqlE.printStackTrace();
        }
     } // close deposit
+
+
+    private void withdrawl(int accountNumber, double withdrawlAmount)
+    {
+       // make connection to db
+
+        sqlConnection = databaseConnection.createConnectionToDatabase();
+
+        String withdrawlStatement = "UPDATE checking_account SET account_balance = account_balance - ? where account_number = ?";
+
+        try
+        {
+        PreparedStatement preparedStatement = sqlConnection.prepareStatement(withdrawlStatement);
+
+        preparedStatement.setDouble(1, withdrawlAmount);
+        preparedStatement.setInt(2, accountNumber);
+
+            preparedStatement.execute();
+
+        results.append(withdrawlAmount + " withdrawn from account # " + accountNumber + "\n");
+
+
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void enoughFunds()
+    {
+
+        double amountToWithdraw = Double.parseDouble(input.getText());
+        System.out.println("Amount to withdraw: " + amountToWithdraw);
+        int accountNumber = this.accountNumber;
+
+        //make connection to db
+        sqlConnection = databaseConnection.createConnectionToDatabase();
+
+        String checkFundsStatement = "SELECT account_balance FROM checking_account WHERE account_number = ?";
+
+        try
+        {
+        PreparedStatement preparedStatement = sqlConnection.prepareStatement(checkFundsStatement);
+
+        preparedStatement.setInt(1, accountNumber);
+
+        ResultSet balanceResultSet = preparedStatement.executeQuery();
+
+        while(balanceResultSet.next())
+            accountBalance = balanceResultSet.getDouble(1);
+
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        if(amountToWithdraw < accountBalance)
+        {
+            System.out.println("Enough funds available");
+            withdrawl(accountNumber, amountToWithdraw);
+        }
+        else
+            results.append("Sorry, you don't have enough funds");
+    }
 
     private void connectToDatabase(int accountNumber)
     {
@@ -212,7 +283,11 @@ class TransactionActionListener implements ActionListener
             AccessAccount.results.append("Enter amount to deposit" + "\n");
             actionPerformed = "Deposit";
         }
-        if(e.getActionCommand().equals("Withdrawal")) {AccessAccount.results.append("Enter amount to withdraw");}
+        if(e.getActionCommand().equals("Withdrawal"))
+        {
+            AccessAccount.results.append("Enter amount to withdraw" + "\n");
+            actionPerformed = "Withdrawal";
+        }
 
     }
 
