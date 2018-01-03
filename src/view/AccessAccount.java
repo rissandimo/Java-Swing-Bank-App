@@ -47,15 +47,113 @@ import java.sql.*;
         this.accountNumber = accountNumber;
     }
 
+    private void checkAccountInfo()
+    {
+        System.out.println("checkAccountInfo");
+
+        sqlConnection = databaseConnection.createConnectionToDatabase();
+
+        String accountInfoStatement = "SELECT account_balance as balance from checking_account where account_number = ?";
+
+        try
+        {
+
+            PreparedStatement preparedStatement = sqlConnection.prepareStatement(accountInfoStatement);
+
+            preparedStatement.setInt(1, accountNumber);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next())
+            {
+                AccessAccount.results.append("Balance: " + resultSet.getDouble(1) + "\n");
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void connectToDatabase(int accountNumber)
+    {
+        System.out.println("Attempt to connect to database");
+
+        Connection bankConnection = databaseConnection.createConnectionToDatabase();
+        System.out.println("databaseConnection successful");
+
+        try
+        {
+
+            String selectCustomers = "SELECT first_name, last_name, account_number FROM clients where account_number = ?";
+
+            PreparedStatement preparedStatement = bankConnection.prepareStatement(selectCustomers);
+
+            preparedStatement.setInt(1, accountNumber);
+
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next())
+            {
+                results.append("Client info: ");
+                results.append(resultSet.getString(1) + " " + resultSet.getString(2) + "\n" +
+                        "Account number: " + resultSet.getString(3) + "\n");
+            }
+
+
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+
+    }// close connectToDatabase
+
     private void createView()
     {
 
         //TOP PANEL - BUTTONS
-        deposit = new JButton("Deposit");
-        withdrawal = new JButton("Withdrawal");
-        checkAcctInfo = new JButton("Account Info");
+        deposit         = new JButton("Deposit");
+        withdrawal      = new JButton("Withdrawal");
+
+        checkAcctInfo   = new JButton("Account Info");
         checkAcctInfo.addActionListener(e-> checkAccountInfo());
-        logOut = new JButton("Log Out");
+
+        logOut          = new JButton("Log Out");
+
+        class CloseApplication implements Runnable
+        {
+            public void run()
+            {
+                try
+                {
+                    Thread.sleep(2000);
+                    dispose();
+                }
+                catch(InterruptedException e2) {e2.printStackTrace();}
+
+            }
+
+            public void closeWindow()
+            {
+                Thread thread = new Thread(this);
+                thread.start();
+            }
+        }
+
+       logOut.addActionListener(e->
+       {
+           {
+               results.append("Close account # " + accountNumber);
+               new CloseApplication().closeWindow();
+           }
+       });
+
+
+
+
 
         panelTop = new JPanel();
         panelTop.add(deposit);
@@ -90,7 +188,6 @@ import java.sql.*;
                deposit(Integer.parseInt(input.getText()));
             if(TransactionActionListener.actionPerformed.equals("Withdrawal"))
                 enoughFunds();
-
         });
 
 
@@ -107,33 +204,6 @@ import java.sql.*;
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
-    private void checkAccountInfo()
-    {
-        System.out.println("checkAccountInfo");
-
-        sqlConnection = databaseConnection.createConnectionToDatabase();
-
-        String accountInfoStatement = "SELECT account_balance as balance from checking_account where account_number = ?";
-
-        try
-        {
-
-            PreparedStatement preparedStatement = sqlConnection.prepareStatement(accountInfoStatement);
-
-            preparedStatement.setInt(1, accountNumber);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next())
-            {
-                AccessAccount.results.append("Balance: " + resultSet.getDouble(1) + "\n");
-            }
-        }
-        catch(SQLException e)
-        {
-            e.printStackTrace();
-        }
-    }
 
     private void deposit(double depositAmount)
     {
@@ -161,6 +231,42 @@ import java.sql.*;
        }
     } // close deposit
 
+    private void enoughFunds()
+    {
+
+        double amountToWithdraw = Double.parseDouble(input.getText());
+        System.out.println("Amount to withdraw: " + amountToWithdraw);
+        int accountNumber = this.accountNumber;
+
+        //make connection to db
+        sqlConnection = databaseConnection.createConnectionToDatabase();
+
+        String checkFundsStatement = "SELECT account_balance FROM checking_account WHERE account_number = ?";
+
+        try
+        {
+            PreparedStatement preparedStatement = sqlConnection.prepareStatement(checkFundsStatement);
+
+            preparedStatement.setInt(1, accountNumber);
+
+            ResultSet balanceResultSet = preparedStatement.executeQuery();
+
+            while(balanceResultSet.next()) accountBalance = balanceResultSet.getDouble(1);
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        if(amountToWithdraw < accountBalance)
+        {
+            System.out.println("Enough funds available");
+            withdrawl(accountNumber, amountToWithdraw);
+        }
+        else
+            results.append("Sorry, you don't have enough funds");
+    }
+
 
     private void withdrawl(int accountNumber, double withdrawlAmount)
     {
@@ -177,93 +283,15 @@ import java.sql.*;
         preparedStatement.setDouble(1, withdrawlAmount);
         preparedStatement.setInt(2, accountNumber);
 
-            preparedStatement.execute();
+        preparedStatement.execute();
 
         results.append(withdrawlAmount + " withdrawn from account # " + accountNumber + "\n");
-
-
         }
         catch(SQLException e)
         {
             e.printStackTrace();
         }
-
-
     }
-
-    private void enoughFunds()
-    {
-
-        double amountToWithdraw = Double.parseDouble(input.getText());
-        System.out.println("Amount to withdraw: " + amountToWithdraw);
-        int accountNumber = this.accountNumber;
-
-        //make connection to db
-        sqlConnection = databaseConnection.createConnectionToDatabase();
-
-        String checkFundsStatement = "SELECT account_balance FROM checking_account WHERE account_number = ?";
-
-        try
-        {
-        PreparedStatement preparedStatement = sqlConnection.prepareStatement(checkFundsStatement);
-
-        preparedStatement.setInt(1, accountNumber);
-
-        ResultSet balanceResultSet = preparedStatement.executeQuery();
-
-        while(balanceResultSet.next())
-            accountBalance = balanceResultSet.getDouble(1);
-
-        }
-        catch(SQLException e)
-        {
-            e.printStackTrace();
-        }
-
-        if(amountToWithdraw < accountBalance)
-        {
-            System.out.println("Enough funds available");
-            withdrawl(accountNumber, amountToWithdraw);
-        }
-        else
-            results.append("Sorry, you don't have enough funds");
-    }
-
-    private void connectToDatabase(int accountNumber)
-    {
-        System.out.println("Attempt to connect to database");
-
-        Connection bankConnection = databaseConnection.createConnectionToDatabase();
-        System.out.println("databaseConnection successful");
-
-        try
-        {
-
-        String selectCustomers = "SELECT first_name, last_name, account_number FROM clients where account_number = ?";
-
-        PreparedStatement preparedStatement = bankConnection.prepareStatement(selectCustomers);
-
-        preparedStatement.setInt(1, accountNumber);
-
-
-        ResultSet resultSet = preparedStatement.executeQuery();
-
-       while(resultSet.next())
-       {
-           results.append("Client info: ");
-           results.append(resultSet.getString(1) + " " + resultSet.getString(2) + "\n" +
-           "Account number: " + resultSet.getString(3) + "\n");
-       }
-
-
-        }
-        catch(SQLException e)
-        {
-            e.printStackTrace();
-        }
-
-
-    }// close connectToDatabase
 
 
 }// close AccessAccount
