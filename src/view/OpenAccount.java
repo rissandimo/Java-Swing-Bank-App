@@ -61,6 +61,8 @@ public class OpenAccount extends JFrame // works
 
             //BUTTONS
             buttonClear = new JButton("Clear");
+            buttonClear.addActionListener(e->{inputAccountNumber.setText("");});
+
             buttonSubmit = new JButton("Submit");
             buttonSubmit.addActionListener(e -> checkClientInfo());
 
