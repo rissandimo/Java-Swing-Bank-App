@@ -146,7 +146,7 @@ import java.sql.*;
        logOut.addActionListener(e->
        {
            {
-               results.append("Close account # " + accountNumber);
+               results.append("Logging out of account # " + accountNumber);
                new CloseApplication().closeWindow();
            }
        });
