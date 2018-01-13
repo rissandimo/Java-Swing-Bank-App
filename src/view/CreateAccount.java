@@ -5,10 +5,7 @@ import model.DatabaseConnection;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /*
 CreateAccount gets called if the new account info is correct
@@ -178,9 +175,13 @@ public class CreateAccount extends JFrame
         try
         {
 
-            Statement statement = bankConnection.createStatement();
+           // Statement statement = bankConnection.createStatement();
 
-            ResultSet ssnResultSet = statement.executeQuery("SELECT social FROM clients");
+            String checkClient = "SELECT social FROM clients";
+
+            PreparedStatement preparedStatement = bankConnection.prepareStatement(checkClient);
+
+            ResultSet ssnResultSet = preparedStatement.executeQuery();
 
             while(ssnResultSet.next())
             {
@@ -201,26 +202,34 @@ public class CreateAccount extends JFrame
 
     private int getBiggestAccountNumber()
     {
+        System.out.println("getBiggestAccountNumber()");
         Connection bankConnection = connection.createConnectionToDatabase();
 
         int largestAccountNumber = 0;
 
         try
         {
-            Statement statement = bankConnection.createStatement();
+           // Statement statement = bankConnection.createStatement();
 
-            ResultSet resultSetlargestAccountNumber = statement.executeQuery("SELECT account_number from clients");
+            String largestAcctNum = "SELECT MAX(account_number) from clients";
 
-            while(resultSetlargestAccountNumber.next())
+            PreparedStatement preparedStatement = bankConnection.prepareStatement(largestAcctNum);
+
+            ResultSet resultlargestAcctNum = preparedStatement.executeQuery();
+
+            while(resultlargestAcctNum.next())
             {
-                largestAccountNumber = resultSetlargestAccountNumber.getInt(1);
+                largestAccountNumber = resultlargestAcctNum.getInt(1);
+                 System.out.println("Largest account# found: " + largestAccountNumber);
+                return largestAccountNumber;
             }
+
         }
         catch(SQLException e)
         {
             e.printStackTrace();
         }
-        System.out.println("largest account number:" + largestAccountNumber);
+
             return largestAccountNumber;
     }
 
