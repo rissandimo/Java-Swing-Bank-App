@@ -151,10 +151,6 @@ import java.sql.*;
            }
        });
 
-
-
-
-
         panelTop = new JPanel();
         panelTop.add(deposit);
         panelTop.add(withdrawal);
@@ -185,7 +181,7 @@ import java.sql.*;
         submit.addActionListener(e ->
         {
             if(TransactionActionListener.actionPerformed.equals("Deposit"))
-               deposit(Integer.parseInt(input.getText()));
+               deposit(Double.parseDouble(input.getText()));
             if(TransactionActionListener.actionPerformed.equals("Withdrawal"))
                 enoughFunds();
         });
@@ -211,17 +207,30 @@ import java.sql.*;
         //connect to db and perform deposit
        sqlConnection = databaseConnection.createConnectionToDatabase();
 
-       String depositStatement = "UPDATE checking_account SET account_balance = account_balance + ? WHERE account_number = ?";
+       //added auto increment to checking_deposit but haven't made the change to mysql
+       String deposit = "INSERT INTO checking_deposit (account_number, deposit) VALUES (?,?)";
+       String updateBalance = "UPDATE checking_account SET account_balance = account_balance + ? WHERE account_number = ?";
 
        try
        {
 
-       PreparedStatement preparedStatement = sqlConnection.prepareStatement(depositStatement);
+       PreparedStatement preparedStatementDeposit = sqlConnection.prepareStatement(deposit);
 
-       preparedStatement.setDouble(1, depositAmount);
-       preparedStatement.setInt(2, accountNumber);
+       PreparedStatement preparedStatementUpdate = sqlConnection.prepareStatement(updateBalance);
 
-       preparedStatement.execute();
+       //DEPOSIT
+       preparedStatementDeposit.setInt(1, accountNumber);
+       preparedStatementDeposit.setDouble(2, depositAmount);
+
+       //UPDATE
+       preparedStatementUpdate.setDouble(1, depositAmount);
+       preparedStatementUpdate.setInt(2, accountNumber);
+
+       preparedStatementUpdate.execute(); //2nd
+       preparedStatementDeposit.execute();
+
+
+       input.setText(" ");
 
        results.append("$"+ depositAmount + " deposited into account # :" + accountNumber + "\n");
        }
@@ -300,7 +309,7 @@ import java.sql.*;
 class TransactionActionListener implements ActionListener
 {
 
-    static String actionPerformed;
+    static String actionPerformed = "";
 
     public void actionPerformed(ActionEvent e)
     {
