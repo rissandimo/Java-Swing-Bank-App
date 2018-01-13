@@ -30,12 +30,13 @@ public class CreateClientAccount
         this.lastName = lastName;
         this.social = social;
         ACCOUNT_NUMBER = ++accountNumber; //increments acct for next user
+        System.out.println("Acct # to be assigned: " + ACCOUNT_NUMBER);
         bankConnection = new DatabaseConnection();
 
-        addClientInfo(firstName, lastName, social, ACCOUNT_NUMBER);
+        addClientInfo(firstName, lastName, social);
     }
 
-    private void addClientInfo(String firstName, String lastName, String social, int ACCOUNT_NUMBER)
+    private void addClientInfo(String firstName, String lastName, String social)
     {
         System.out.println("addClientInfo()");
 
@@ -67,7 +68,7 @@ public class CreateClientAccount
             }
     }// close addClientInfo
 
-    private void addCheckingInfo(int accountNumber, double balance, String social)
+    private void addCheckingInfo(int ACCOUNT_NUMBER, double balance, String social)
     {
         System.out.println("addCheckingInfo()");
         Connection connection = bankConnection.createConnectionToDatabase();
@@ -79,7 +80,7 @@ public class CreateClientAccount
         PreparedStatement preparedStatement = connection.prepareStatement(checkingStatement);
 
         preparedStatement.setInt(1, ACCOUNT_NUMBER);
-        preparedStatement.setDouble(2,0.0);
+        preparedStatement.setDouble(2,balance);
         preparedStatement.setString(3, social);
 
         preparedStatement.execute();
