@@ -7,7 +7,7 @@ import java.sql.*;
 
 /**
  * Connects to the bank database and adds the client if it doesn't exist
- * It creates an account number, logs into the account, and displays the interface
+ * It creates an account number, logs into the account, and displays the Access Account interface
  */
 
 public class CreateClientAccount
@@ -52,8 +52,6 @@ public class CreateClientAccount
                 preparedStatementClient.setString(2, lastName);
                 preparedStatementClient.setString(3, social);
                 preparedStatementClient.setInt(4, ACCOUNT_NUMBER);
-
-                System.out.println("client sql statement executing");
 
                 preparedStatementClient.execute();
 
