@@ -10,27 +10,17 @@ import java.sql.*;
  public class AccessAccount extends JFrame
 {
 
-/*    public static void main(String[] args)
+    public static void main(String[] args)
     {
         new AccessAccount(1);
-    }*/
+    }
 
     private DatabaseConnection databaseConnection;
-    private Connection sqlConnection;
-    private TransactionActionListener transactionActionListener;
+    private Connection         sqlConnection;
 
-    private JButton checkAcctInfo;
-    private JButton deposit;
-    private JButton logOut;
-    private JButton submit;
-    private JButton withdrawal;
+    protected static JTextArea   results;
 
-    private JPanel panelBottom;
-    private JPanel panelCenter;
-    private JPanel panelTop;
-
-    private JTextField input;
-    static JTextArea results;
+    private        JTextField  input;
 
     private int     accountNumber;
     private double  accountBalance;
@@ -41,15 +31,14 @@ import java.sql.*;
 
         createView();
 
-        databaseConnection = new DatabaseConnection();
-        connectToDatabase(accountNumber);
-
         this.accountNumber = accountNumber;
+
+        connectToDatabase(accountNumber);
     }
 
     private void checkAccountInfo()
     {
-        System.out.println("checkAccountInfo");
+        System.out.println("checkAccountInfo()");
 
         sqlConnection = databaseConnection.createConnectionToDatabase();
 
@@ -57,17 +46,15 @@ import java.sql.*;
 
         try
         {
-
             PreparedStatement preparedStatement = sqlConnection.prepareStatement(accountInfoStatement);
 
             preparedStatement.setInt(1, accountNumber);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next())
-            {
-                AccessAccount.results.append("Balance: " + resultSet.getDouble(1) + "\n");
-            }
+            resultSet.next(); // call next() because initially the cursor is positioned before the first row
+
+            AccessAccount.results.append("Balance: " + resultSet.getDouble(1) + "\n");
         }
         catch(SQLException e)
         {
@@ -77,9 +64,9 @@ import java.sql.*;
 
     private void connectToDatabase(int accountNumber)
     {
-        System.out.println("Attempt to connect to database");
+        databaseConnection = new DatabaseConnection(); // initialize Connection reference - returns conn to Bank
 
-        Connection bankConnection = databaseConnection.createConnectionToDatabase();
+        Connection bankConnection = databaseConnection.createConnectionToDatabase(); // return SQL connection - API
         System.out.println("databaseConnection successful");
 
         try
@@ -115,13 +102,13 @@ import java.sql.*;
     {
 
         //TOP PANEL - BUTTONS
-        deposit         = new JButton("Deposit");
-        withdrawal      = new JButton("Withdrawal");
+        JButton deposit = new JButton("Deposit");
+        JButton withdrawal = new JButton("Withdrawal");
 
-        checkAcctInfo   = new JButton("Account Info");
+        JButton checkAcctInfo = new JButton("Account Info");
         checkAcctInfo.addActionListener(e-> checkAccountInfo());
 
-        logOut          = new JButton("Log Out");
+        JButton logOut = new JButton("Log Out");
 
         class CloseApplication implements Runnable
         {
@@ -151,7 +138,7 @@ import java.sql.*;
            }
        });
 
-        panelTop = new JPanel();
+        JPanel panelTop = new JPanel();
         panelTop.add(deposit);
         panelTop.add(withdrawal);
         panelTop.add(checkAcctInfo);
@@ -160,7 +147,7 @@ import java.sql.*;
         add(panelTop, BorderLayout.NORTH);
 
 
-        transactionActionListener = new TransactionActionListener();
+        TransactionActionListener transactionActionListener = new TransactionActionListener();
 
         checkAcctInfo.addActionListener(transactionActionListener);
         deposit.addActionListener(transactionActionListener);
@@ -170,14 +157,14 @@ import java.sql.*;
 
         //CENTER PANEL - Text Area
         results = new JTextArea(50,50);
-        panelCenter = new JPanel();
+        JPanel panelCenter = new JPanel();
         panelCenter.add(results);
 
         add(panelCenter, BorderLayout.CENTER);
 
         //BOTTOM PANEL - Submit Buttons & Text Input
         input = new JTextField(15);
-        submit = new JButton("Submit");
+        JButton submit = new JButton("Submit");
         submit.addActionListener(e ->
         {
             if(TransactionActionListener.actionPerformed.equals("Deposit"))
@@ -187,7 +174,7 @@ import java.sql.*;
         });
 
 
-        panelBottom = new JPanel();
+        JPanel panelBottom = new JPanel();
         panelBottom.add(input);
         panelBottom.add(submit);
         add(panelBottom, BorderLayout.SOUTH);
