@@ -126,10 +126,8 @@ public class CreateAccount extends JFrame
         String firstName = inputFirstName.getText();
         String lastName = inputLastName.getText();
         String social = inputSocial.getText();
-        System.out.println("social regular:" + social);
 
         social = social.replaceAll("[- ]", "");
-        System.out.println("social after regex: " + social);
 
 
         if (firstName.length() == 0)
