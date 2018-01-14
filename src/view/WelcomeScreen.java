@@ -1,5 +1,7 @@
 package view;
 
+import controller.RemoveClientAccount;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,12 +10,6 @@ import java.awt.*;
  */
 public class WelcomeScreen extends JFrame
 {
-
-        private JButton buttonCreateAccount;
-        private JButton buttonAccessAccount;
-        private JLabel labelSelection;
-        private JPanel buttonsPanel;
-        private JPanel labelPanel;
 
     public WelcomeScreen() {
         System.out.println("Welcome screen");
@@ -25,28 +21,35 @@ public class WelcomeScreen extends JFrame
 
         //BUTTONS
 
-        buttonAccessAccount = new JButton("Access Account");
+        JButton buttonAccessAccount = new JButton("Access Account");
         buttonAccessAccount.addActionListener(e ->
         {
             dispose();
             new OpenAccount();
         });
 
-        buttonCreateAccount = new JButton("Create Account");
+        JButton buttonCreateAccount = new JButton("Create Account");
         buttonCreateAccount.addActionListener(e ->
         {
             dispose();
             new CreateAccount();
         });
 
+/*        JButton buttonDeleteAccount = new JButton("Delete Account");
+        buttonDeleteAccount.addActionListener(e ->
+        {
+            dispose();
+            new RemoveClientAccount();
+        });*/
+
         //LABELS
 
-        labelSelection = new JLabel("Please make a selection below");
+        JLabel labelSelection = new JLabel("Please make a selection below");
 
 
         //PANELS
-        buttonsPanel = new JPanel();
-        labelPanel = new JPanel();
+        JPanel buttonsPanel = new JPanel();
+        JPanel labelPanel =   new JPanel();
 
 
         // ADD COMPONENTS TO FRAME
