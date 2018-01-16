@@ -35,12 +35,12 @@ public class WelcomeScreen extends JFrame
             new CreateAccount();
         });
 
-/*        JButton buttonDeleteAccount = new JButton("Delete Account");
+        JButton buttonDeleteAccount = new JButton("Delete Account");
         buttonDeleteAccount.addActionListener(e ->
         {
             dispose();
             new RemoveClientAccount();
-        });*/
+        });
 
         //LABELS
 
@@ -56,6 +56,7 @@ public class WelcomeScreen extends JFrame
 
         buttonsPanel.add(buttonAccessAccount);
         buttonsPanel.add(buttonCreateAccount);
+        buttonsPanel.add(buttonDeleteAccount);
 
         labelPanel.add(labelSelection);
 
