@@ -52,10 +52,14 @@ import java.sql.*;
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            resultSet.next(); // call next() because initially the cursor is positioned before the first row
+            while(resultSet.next()) // call next() because initially the cursor is positioned before the first row
+            {
+                AccessAccount.results.append(String.format("Balance: %.2f \n", resultSet.getDouble(1)));
+            }
+            resultSet.first();
 
-            AccessAccount.results.append("Balance: " + resultSet.getDouble(1) + "\n");
-        }
+            if(resultSet.getDouble(1) == 0.0) System.out.println("No funds available");
+            }
         catch(SQLException e)
         {
             e.printStackTrace();
@@ -172,6 +176,8 @@ import java.sql.*;
                deposit(Double.parseDouble(input.getText()));
             if(TransactionActionListener.actionPerformed.equals("Withdrawal"))
                 enoughFunds();
+            if(TransactionActionListener.actionPerformed.equals(""))
+                results.append("Please make a selection above \n");
         });
 
 
@@ -202,21 +208,21 @@ import java.sql.*;
        try
        {
 
-       PreparedStatement preparedStatementDeposit = sqlConnection.prepareStatement(deposit);
+       PreparedStatement tbl_checking_deposit = sqlConnection.prepareStatement(deposit);
 
-       PreparedStatement preparedStatementUpdate = sqlConnection.prepareStatement(updateBalance);
+       PreparedStatement tbl_checking_account = sqlConnection.prepareStatement(updateBalance);
 
-       //DEPOSIT
-       preparedStatementDeposit.setInt(1, accountNumber);
-       preparedStatementDeposit.setDouble(2, depositAmount);
+       //DEPOSIT - Checking Deposit
+       tbl_checking_deposit.setInt(1, accountNumber);
+       tbl_checking_deposit.setDouble(2, depositAmount);
 
-       //UPDATE
-       preparedStatementUpdate.setDouble(1, depositAmount);
-       preparedStatementUpdate.setInt(2, accountNumber);
+       //UPDATE - Checking account
+       tbl_checking_account.setDouble(1, depositAmount);
+       tbl_checking_account.setInt(2, accountNumber);
 
-       //Update checking account then make deposit
-       preparedStatementUpdate.execute();
-       preparedStatementDeposit.execute();
+       //Update checking account, deposit into checking account, update checking account
+       tbl_checking_account.execute();
+       tbl_checking_deposit.execute();
 
 
        input.setText(" ");
@@ -257,7 +263,7 @@ import java.sql.*;
             e.printStackTrace();
         }
 
-        if(amountToWithdraw < accountBalance)
+        if(amountToWithdraw <= accountBalance)
         {
             System.out.println("Enough funds available");
             withdrawl(amountToWithdraw);
@@ -329,6 +335,8 @@ class TransactionActionListener implements ActionListener
         }
 
     }
+
+
 
 }
 
