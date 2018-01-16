@@ -103,6 +103,7 @@ import java.sql.*;
 
         //TOP PANEL - BUTTONS
         JButton deposit = new JButton("Deposit");
+
         JButton withdrawal = new JButton("Withdrawal");
 
         JButton checkAcctInfo = new JButton("Account Info");
@@ -195,8 +196,8 @@ import java.sql.*;
        sqlConnection = databaseConnection.createConnectionToDatabase();
 
        //added auto increment to checking_deposit but haven't made the change to mysql
-       String deposit = "INSERT INTO checking_deposit (account_number, deposit) VALUES (?,?)";
        String updateBalance = "UPDATE checking_account SET account_balance = account_balance + ? WHERE account_number = ?";
+       String deposit = "INSERT INTO checking_deposit (account_number, deposit) VALUES (?,?)";
 
        try
        {
@@ -213,13 +214,15 @@ import java.sql.*;
        preparedStatementUpdate.setDouble(1, depositAmount);
        preparedStatementUpdate.setInt(2, accountNumber);
 
-       preparedStatementUpdate.execute(); //2nd
+       //Update checking account then make deposit
+       preparedStatementUpdate.execute();
        preparedStatementDeposit.execute();
 
 
        input.setText(" ");
 
-       results.append("$"+ depositAmount + " deposited into account # :" + accountNumber + "\n");
+       results.append(String.format("$ %.2f deposited into account # %d \n", depositAmount, accountNumber));
+
        }
        catch(SQLException sqlE)
        {
@@ -257,31 +260,43 @@ import java.sql.*;
         if(amountToWithdraw < accountBalance)
         {
             System.out.println("Enough funds available");
-            withdrawl(accountNumber, amountToWithdraw);
+            withdrawl(amountToWithdraw);
         }
         else
-            results.append("Sorry, you don't have enough funds");
+            results.append("Sorry, you don't have enough funds \n");
     }
 
 
-    private void withdrawl(int accountNumber, double withdrawlAmount)
+    private void withdrawl(double withdrawlAmount)
     {
        // make connection to db
 
         sqlConnection = databaseConnection.createConnectionToDatabase();
 
-        String withdrawlStatement = "UPDATE checking_account SET account_balance = account_balance - ? where account_number = ?";
+        String updateStatement = "UPDATE checking_account SET account_balance = account_balance - ? where account_number = ?";
+        String withdrawalStatement = "INSERT INTO checking_withdrawl (account_number, withdrawl) values(?,?)";
 
         try
         {
-        PreparedStatement preparedStatement = sqlConnection.prepareStatement(withdrawlStatement);
+        PreparedStatement preparedStatementWithdrawal = sqlConnection.prepareStatement(withdrawalStatement);
+        PreparedStatement preparedStatementUpdate = sqlConnection.prepareStatement(updateStatement);
 
-        preparedStatement.setDouble(1, withdrawlAmount);
-        preparedStatement.setInt(2, accountNumber);
+        //WITHDRAWAL
+        preparedStatementWithdrawal.setInt(1, accountNumber);
+        preparedStatementWithdrawal.setDouble(2, withdrawlAmount);
 
-        preparedStatement.execute();
+        //UPDATE
+        preparedStatementUpdate.setDouble(1, withdrawlAmount);
+        preparedStatementUpdate.setInt(2, accountNumber);
 
-        results.append(withdrawlAmount + " withdrawn from account # " + accountNumber + "\n");
+        //Update checking account then make withdrawal
+        preparedStatementUpdate.execute();
+        preparedStatementWithdrawal.execute();
+
+        results.append(String.format("$ %.2f withdrawn from account # %d \n", withdrawlAmount, accountNumber));
+
+        input.setText("");
+
         }
         catch(SQLException e)
         {
