@@ -18,15 +18,9 @@ public class CreateAccount extends JFrame
 /*    private int clientAge;
     private double clientBalance;*/
 
-    //  private String clientEmail, clientFirstName, clientLastName, clientSocial;
-    private JButton buttonSubmit, buttonClear;
-    private JLabel labelFirstName, labelLastName, labelSocial, labelTelephone, labelEmail, labelSelection;
-    private JPanel panelLabels, panelInputs, panelButtons, panelTop;
     private JTextField inputFirstName;
     private JTextField inputLastName;
     private JTextField inputSocial;
-    private JTextField inputTelephone;
-    private JTextField inputEmail;
 
     private DatabaseConnection connection;
     private boolean doesClientExist;
@@ -41,37 +35,33 @@ public class CreateAccount extends JFrame
     CreateAccount()
     {
 
-        setSize(350, 250);
+        setSize(450, 200);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
         setTitle("Create Account");
 
         //LABELS
-        labelFirstName = new JLabel("First Name: ");
-        labelLastName = new JLabel("Last Name: ");
-        labelEmail = new JLabel("Email: ");
-        labelSelection = new JLabel("Please make a selection below");
-        labelSocial = new JLabel("Social Security #: ");
-        labelTelephone = new JLabel("Telephone #");
+        JLabel labelFirstName = new JLabel("First Name: ");
+        JLabel labelLastName = new JLabel("Last Name: ");
+        JLabel labelSelection = new JLabel("Please make a selection below");
+        JLabel labelSocial = new JLabel("Social Security #: ");
 
         //INPUTS
         inputFirstName = new JTextField(15);
-        inputLastName = new JTextField(15);
-        inputEmail = new JTextField(15);
-        inputTelephone = new JTextField(15);
-        inputSocial = new JTextField(15);
+        inputLastName  = new JTextField(15);
+        inputSocial    = new JTextField(15);
 
         //PANELS
-        panelButtons = new JPanel();
-        panelInputs = new JPanel();
-        panelLabels = new JPanel();
-        panelTop = new JPanel();
+        JPanel panelButtons = new JPanel();
+        JPanel panelInputs = new JPanel();
+        JPanel panelLabels = new JPanel();
+        JPanel panelTop = new JPanel();
 
 
         //BUTTONS
-        buttonClear = new JButton("Clear");
-        buttonSubmit = new JButton("Submit");
+        JButton buttonClear = new JButton("Clear");
+        JButton buttonSubmit = new JButton("Submit");
         buttonSubmit.addActionListener(e -> checkClientInfo());
 
 
@@ -80,13 +70,12 @@ public class CreateAccount extends JFrame
 
         inputFirstName.setPreferredSize(textFieldDimension);
         inputLastName.setPreferredSize(textFieldDimension);
-        inputEmail.setPreferredSize(textFieldDimension);
-        inputTelephone.setPreferredSize(textFieldDimension);
         inputSocial.setPreferredSize(textFieldDimension);
 
         //SET LAYOUTS
-        panelLabels.setLayout(new GridLayout(5,1)); // LEFT -- displays correctly
-        panelInputs.setLayout(new BoxLayout(panelInputs,BoxLayout.Y_AXIS)); // RIGHT
+        panelLabels.setLayout(new GridLayout(3,1)); // LEFT -- displays correctly
+       // panelInputs.setLayout(new BoxLayout(panelInputs,BoxLayout.Y_AXIS)); // RIGHT
+        panelInputs.setLayout(new GridLayout(3,1));
 
         //ADD LABELS TO PANEL
         panelLabels.add(labelFirstName);
@@ -100,9 +89,7 @@ public class CreateAccount extends JFrame
         //ADD INPUTS TO PANEL
         panelInputs.add(inputFirstName);
         panelInputs.add(inputLastName);
-        // panelInputs.add(inputEmail);
         panelInputs.add(inputSocial);
-        //  panelInputs.add(inputTelephone);
 
         //ADD BUTTONS TO PANEL
         panelButtons.add(buttonSubmit);
@@ -144,10 +131,6 @@ public class CreateAccount extends JFrame
         }
         else
         {
-            System.out.println("Information correct");
-            System.out.println("first name: " + firstName);
-            System.out.println("last name: " + lastName);
-            System.out.println("social length after trim: " + social.trim().length());
             informationCorrect = true;
 
 
