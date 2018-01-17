@@ -280,7 +280,7 @@ import java.sql.*;
         sqlConnection = databaseConnection.createConnectionToDatabase();
 
         String updateStatement = "UPDATE checking_account SET account_balance = account_balance - ? where account_number = ?";
-        String withdrawalStatement = "INSERT INTO checking_withdrawl (account_number, withdrawl) values(?,?)";
+        String withdrawalStatement = "INSERT INTO checking_withdrawl (account_number, withdrawal) values(?,?)";
 
         try
         {
