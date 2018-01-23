@@ -22,6 +22,7 @@ public class AccessAccount extends JFrame
 
     protected static JTextArea results;
     private JTextField input;
+    private JPanel panelTop;
 
     private int accountNumber;
     private double accountBalance;
@@ -43,7 +44,7 @@ public class AccessAccount extends JFrame
          bankConnection = new DatabaseConnection().createConnectionToDatabase();
     }
 
-    private void checkAccountInfo()
+    private void checkAccountInfo() // used for check balance button
     {
 
         String accountInfoStatement = "SELECT account_balance as balance from checking_account where account_number = ?";
@@ -71,7 +72,6 @@ public class AccessAccount extends JFrame
     }
 
 
-
     public void listClients()
     {
         try
@@ -83,7 +83,6 @@ public class AccessAccount extends JFrame
 
             preparedStatement.setInt(1, accountNumber);
 
-
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next())
@@ -93,18 +92,12 @@ public class AccessAccount extends JFrame
                         "Account number: " + resultSet.getString(3) + "\n");
             }
 
-
         }
-        catch(SQLException e)
-        {
-            e.printStackTrace();
-        }
-
+        catch(SQLException e) { e.printStackTrace(); }
     }
 
-    private void createView()
+    public void createMenu()
     {
-        //MENU
         MenuActionListener menuListener = new MenuActionListener();
 
         JMenuBar menuBar = new JMenuBar();
@@ -113,16 +106,18 @@ public class AccessAccount extends JFrame
 
         JMenuItem save = new JMenuItem("Save");
 
-        JMenuItem open = new JMenuItem("Open");
-
         //Register menu items
         save.addActionListener(menuListener);
-        open.addActionListener(menuListener);
-
 
         menu.add(save);
 
         menuBar.add(menu);
+
+        panelTop.add(menu);
+    }
+
+    private void createView()
+    {
 
         //TOP PANEL - BUTTONS
         JButton deposit = new JButton("Deposit");
@@ -133,6 +128,7 @@ public class AccessAccount extends JFrame
         checkAcctInfo.addActionListener(e-> checkAccountInfo());
 
         JButton logOut = new JButton("Log Out");
+
 
         class CloseApplication implements Runnable
         {
@@ -162,8 +158,8 @@ public class AccessAccount extends JFrame
            }
        });
 
-        JPanel panelTop = new JPanel();
-        panelTop.add(menuBar);
+        panelTop = new JPanel();
+       // panelTop.add(menuBar);
         panelTop.add(deposit);
         panelTop.add(withdrawal);
         panelTop.add(checkAcctInfo);
@@ -208,6 +204,9 @@ public class AccessAccount extends JFrame
 
 
         setSize(650, 600);
+
+        createMenu();
+
         setVisible(true);
         setTitle("Access account");
         setLocationRelativeTo(null);
