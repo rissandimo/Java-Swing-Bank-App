@@ -18,7 +18,7 @@ public class CreateClientAccount
      {
          new CreateClientAccount();
      }*/
-    private DatabaseConnection bankConnection;
+    private DatabaseConnection bankConnection = new DatabaseConnection();
 
     private static int ACCOUNT_NUMBER;
 
@@ -31,14 +31,13 @@ public class CreateClientAccount
         this.social = social;
         ACCOUNT_NUMBER = ++accountNumber; //increments acct for next user
         System.out.println("Acct # to be assigned: " + ACCOUNT_NUMBER);
-        bankConnection = new DatabaseConnection();
+       // bankConnection = new DatabaseConnection();
 
         addClientInfo(firstName, lastName, social);
     }
 
     private void addClientInfo(String firstName, String lastName, String social)
     {
-        System.out.println("addClientInfo()");
 
         try
         {
@@ -55,9 +54,7 @@ public class CreateClientAccount
 
                 preparedStatementClient.execute();
 
-                System.out.println("Client created successfully");
-
-                addCheckingInfo(ACCOUNT_NUMBER, 0.0, social);
+                addCheckingInfo(sqlConnection, ACCOUNT_NUMBER, 0.0, social);
             }
         }
             catch (SQLException e)
@@ -66,24 +63,22 @@ public class CreateClientAccount
             }
     }// close addClientInfo
 
-    private void addCheckingInfo(int ACCOUNT_NUMBER, double balance, String social)
+    private void addCheckingInfo(Connection bankConnection, int ACCOUNT_NUMBER, double balance, String social)
     {
-        System.out.println("addCheckingInfo()");
-        Connection connection = bankConnection.createConnectionToDatabase();
+
+       // Connection connection = bankConnection.createConnectionToDatabase();
 
         try
         {
         String checkingStatement = "INSERT INTO checking_account (account_number, account_balance, social) values(?,?,?)";
 
-        PreparedStatement preparedStatement = connection.prepareStatement(checkingStatement);
+        PreparedStatement preparedStatement = bankConnection.prepareStatement(checkingStatement);
 
         preparedStatement.setInt(1, ACCOUNT_NUMBER);
         preparedStatement.setDouble(2,balance);
         preparedStatement.setString(3, social);
 
         preparedStatement.execute();
-
-        System.out.println("Checking account created");
 
         new AccessAccount(ACCOUNT_NUMBER);
         }
