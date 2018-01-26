@@ -11,14 +11,14 @@ import java.sql.*;
 public class AccessAccount extends JFrame
 {
 
-            //TESTING PURPOSES
+    //TESTING PURPOSES
     public static void main(String[] args)
     {
         new AccessAccount(1);
     }
 
     private Connection bankConnection;
-    private PreparedStatement preparedStatement;
+    private PreparedStatement preparedStatementClient;
 
     protected static JTextArea results;
     private JTextField input;
@@ -29,7 +29,7 @@ public class AccessAccount extends JFrame
 
     public AccessAccount(int accountNumber)
     {
-        this.accountNumber = accountNumber;
+        this.setAccountNumber(accountNumber);
 
         createView();
 
@@ -41,10 +41,10 @@ public class AccessAccount extends JFrame
 
     private void connectToDatabase()
     {
-         bankConnection = new DatabaseConnection().createConnectionToDatabase();
+        bankConnection = new DatabaseConnection().createConnectionToDatabase();
     }
 
-    private void checkAccountInfo() // used for check balance button
+    private void showBalance() // used for check balance button
     {
 
         String accountInfoStatement = "SELECT account_balance as balance from checking_account where account_number = ?";
@@ -53,7 +53,7 @@ public class AccessAccount extends JFrame
         {
             PreparedStatement preparedStatement = bankConnection.prepareStatement(accountInfoStatement);
 
-            preparedStatement.setInt(1, accountNumber);
+            preparedStatement.setInt(1, getAccountNumber());
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -64,7 +64,7 @@ public class AccessAccount extends JFrame
             resultSet.first();
 
             if(resultSet.getDouble(1) == 0.0) System.out.println("No funds available");
-            }
+        }
         catch(SQLException e)
         {
             e.printStackTrace();
@@ -72,7 +72,7 @@ public class AccessAccount extends JFrame
     }
 
 
-    public void listClients()
+    private void listClients()
     {
         try
         {
@@ -81,7 +81,7 @@ public class AccessAccount extends JFrame
 
             PreparedStatement preparedStatement = bankConnection.prepareStatement(selectCustomers);
 
-            preparedStatement.setInt(1, accountNumber);
+            preparedStatement.setInt(1, getAccountNumber());
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -96,70 +96,58 @@ public class AccessAccount extends JFrame
         catch(SQLException e) { e.printStackTrace(); }
     }
 
-    public void createMenu()
+    private void createMenu()
     {
         MenuActionListener menuListener = new MenuActionListener();
 
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu menu = new JMenu("File");
+        JMenu fileMenu = new JMenu("File");
 
-        JMenuItem save = new JMenuItem("Save");
+        JMenuItem save = new JMenuItem("Save Deposit History");
 
-        //Register menu items
+        //Register save button
         save.addActionListener(menuListener);
 
-        menu.add(save);
+        fileMenu.add(save);
 
-        menuBar.add(menu);
+        menuBar.add(fileMenu);
 
-        panelTop.add(menu);
+        panelTop.add(menuBar);
     }
 
     private void createView()
     {
+        setSize(650, 600);
+        setTitle("Access account");
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         //TOP PANEL - BUTTONS
+        panelTop = new JPanel();
+
+        createMenu();
+
         JButton deposit = new JButton("Deposit");
 
         JButton withdrawal = new JButton("Withdrawal");
 
         JButton checkAcctInfo = new JButton("Account Info");
-        checkAcctInfo.addActionListener(e-> checkAccountInfo());
+        checkAcctInfo.addActionListener(e-> showBalance());
 
         JButton logOut = new JButton("Log Out");
 
-
-        class CloseApplication implements Runnable
+        logOut.addActionListener(e ->
         {
-            public void run()
+            results.append("Logging out of account");
+            try
             {
-                try
-                {
-                    Thread.sleep(2000);
-                    dispose();
-                }
-                catch(InterruptedException e2) {e2.printStackTrace();}
-
+                Thread.sleep(2000);
+                dispose();
             }
+            catch(InterruptedException e2){e2.printStackTrace();}
+        });
 
-            public void closeWindow()
-            {
-                Thread thread = new Thread(this);
-                thread.start();
-            }
-        }
-
-       logOut.addActionListener(e->
-       {
-           {
-               results.append("Logging out of account # " + accountNumber);
-               new CloseApplication().closeWindow();
-           }
-       });
-
-        panelTop = new JPanel();
-       // panelTop.add(menuBar);
         panelTop.add(deposit);
         panelTop.add(withdrawal);
         panelTop.add(checkAcctInfo);
@@ -189,9 +177,9 @@ public class AccessAccount extends JFrame
         submit.addActionListener(e ->
         {
             if(TransactionActionListener.actionPerformed.equals("Deposit"))
-               deposit(Double.parseDouble(input.getText()));
+                deposit(Double.parseDouble(input.getText()));
             if(TransactionActionListener.actionPerformed.equals("Withdrawal"))
-                enoughFunds();
+                areEnoughFundsAvailable();
             if(TransactionActionListener.actionPerformed.equals(""))
                 results.append("Please make a selection above \n");
         });
@@ -203,126 +191,132 @@ public class AccessAccount extends JFrame
         add(panelBottom, BorderLayout.SOUTH);
 
 
-        setSize(650, 600);
-
-        createMenu();
-
         setVisible(true);
-        setTitle("Access account");
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
 
     private void deposit(double depositAmount)
     {
+        String deposit = "INSERT INTO checking_deposit (account_number, deposit) VALUES (?,?)";
 
-        //connect to db and perform deposit
+        String updateBalance = "UPDATE checking_account SET account_balance = account_balance + ? WHERE account_number = ?";
 
-       //added auto increment to checking_deposit but haven't made the change to mysql
-       String updateBalance = "UPDATE checking_account SET account_balance = account_balance + ? WHERE account_number = ?";
-       String deposit = "INSERT INTO checking_deposit (account_number, deposit) VALUES (?,?)";
-
-
-       try
-       {
-
-       PreparedStatement tbl_checking_deposit = bankConnection.prepareStatement(deposit);
-
-       PreparedStatement tbl_checking_account = bankConnection.prepareStatement(updateBalance);
-
-       //DEPOSIT - Checking Deposit
-       tbl_checking_deposit.setInt(1, accountNumber);
-       tbl_checking_deposit.setDouble(2, depositAmount);
-
-       //UPDATE - Checking account
-       tbl_checking_account.setDouble(1, depositAmount);
-       tbl_checking_account.setInt(2, accountNumber);
-
-       //Update checking account, deposit into checking account, update checking account
-       tbl_checking_account.execute();
-       tbl_checking_deposit.execute();
-
-
-       input.setText(" ");
-
-       results.append(String.format("$ %.2f deposited into account # %d \n", depositAmount, accountNumber));
-
-       }
-       catch(SQLException sqlE)
-       {
-           sqlE.printStackTrace();
-       }
-    } // close deposit
-
-    private void enoughFunds()
-    {
-
-        double amountToWithdraw = Double.parseDouble(input.getText());
-        System.out.println("Amount to withdraw: " + amountToWithdraw);
-        int accountNumber = this.accountNumber;
-
-        //make connection to db
-       // sqlConnection = databaseConnection.createConnectionToDatabase();
-
-        String checkFundsStatement = "SELECT account_balance FROM checking_account WHERE account_number = ?";
 
         try
         {
-             preparedStatement = bankConnection.prepareStatement(checkFundsStatement);
 
-            preparedStatement.setInt(1, accountNumber);
+            PreparedStatement tbl_checking_deposit = bankConnection.prepareStatement(deposit);
 
-            ResultSet balanceResultSet = preparedStatement.executeQuery();
+            PreparedStatement tbl_checking_account = bankConnection.prepareStatement(updateBalance);
 
-            while(balanceResultSet.next()) accountBalance = balanceResultSet.getDouble(1);
+            //DEPOSIT - Checking Deposit
+            tbl_checking_deposit.setInt(1, getAccountNumber());
+            tbl_checking_deposit.setDouble(2, depositAmount);
+
+            //UPDATE - Checking account
+            tbl_checking_account.setDouble(1, depositAmount);
+            tbl_checking_account.setInt(2, getAccountNumber());
+
+            tbl_checking_account.execute();
+            tbl_checking_deposit.execute();
+
+            input.setText(" ");
+
+            results.append(String.format("$ %.2f deposited into account # %d \n", depositAmount, getAccountNumber()));
         }
-        catch(SQLException e)
+        catch(SQLException sqlException) { sqlException.printStackTrace(); }
+
+    } // close deposit
+
+    private void areEnoughFundsAvailable()
+    {
+
+        double amountToWithdraw = Double.parseDouble(input.getText());
+
+        String checkFunds = "SELECT account_balance FROM checking_account WHERE account_number = ?";
+
+        try
+        {
+            preparedStatementClient = bankConnection.prepareStatement(checkFunds);
+
+            preparedStatementClient.setInt(1, getAccountNumber());
+
+            ResultSet balanceResultSet = preparedStatementClient.executeQuery();
+
+            while(balanceResultSet.next()) setAccountBalance(balanceResultSet.getDouble(1));
+        }
+        catch(SQLException sqlException) { sqlException.printStackTrace(); }
+
+        if(amountToWithdraw <= getAccountBalance())
+        {
+            withdrawal(amountToWithdraw);
+        }
+        else results.append("Sorry, you don't have enough funds \n");
+    }
+
+    private void saveClientInfo(BufferedWriter fileWriter)
+    {
+        String clientName = "SELECT first_name, last_name from clients where account_number = ?";
+
+        try
+        {
+
+        //Client name
+        preparedStatementClient = bankConnection.prepareStatement(clientName);
+
+        preparedStatementClient.setInt(1, getAccountNumber());
+
+        ResultSet resultsClient = preparedStatementClient.executeQuery();
+
+        fileWriter = new BufferedWriter(new PrintWriter(fileWriter));
+
+        if(resultsClient.next())
+        {
+            fileWriter.write("Client name: " + resultsClient.getString("first_name") + " "
+                    + resultsClient.getString("last_name"));
+        }
+
+        fileWriter.newLine();
+        fileWriter.newLine();
+
+        fileWriter.flush();
+
+        }
+        catch(SQLException | IOException e)
         {
             e.printStackTrace();
         }
 
-        if(amountToWithdraw <= accountBalance)
-        {
-            System.out.println("Enough funds available");
-            withdrawl(amountToWithdraw);
-        }
-        else
-            results.append("Sorry, you don't have enough funds \n");
+            System.out.println("File created");
+
     }
 
-
-    private void saveCheckingAccount()
+    private void saveCheckingDepositInfo(BufferedWriter fileWriter)
     {
 
-        String checkingInfo = "SELECT * FROM checking_account where account_number = ?";
-
-        BufferedWriter writer = null;
-
-
-        File file = new File("C:\\Users\\Omid\\Desktop\\checking_info.txt");
+        String checkingDeposit = "SELECT account_number, trans_number, deposit FROM checking_deposit where account_number" +
+                " = ?";
 
         try
         {
 
-            preparedStatement = bankConnection.prepareStatement(checkingInfo);
+            //Checking deposit
+            PreparedStatement preparedStatementCheckingDeposit = bankConnection.prepareStatement(checkingDeposit);
 
-            preparedStatement.setInt(1, accountNumber);
+            preparedStatementCheckingDeposit.setInt(1, getAccountNumber());
 
-            file.createNewFile();
+            fileWriter.write("Account \t Transaction \t Deposit Amount \t \n");
+            fileWriter.flush();
+            fileWriter.newLine();
 
-            writer = new BufferedWriter(new PrintWriter(file));
+            ResultSet resultsCheckingDeposit = preparedStatementCheckingDeposit.executeQuery();
 
-            writer.write(String.format("Account # \t Balance \t Social # \t"));
-            writer.flush();
-            writer.newLine();
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-
-            while(resultSet.next())
+            while(resultsCheckingDeposit.next())
             {
-                writer.write(resultSet.getInt(1) + " \t \t" +  resultSet.getDouble(2) + " \t\t" + resultSet.getString(3));
+                fileWriter.write(resultsCheckingDeposit.getInt(1) + " \t \t \t" +  resultsCheckingDeposit.getInt(2) +
+                        " \t\t" + resultsCheckingDeposit.getDouble
+                        (3) + "\n");
+                fileWriter.newLine();
             }
 
             results.append("Checking account saved \n");
@@ -337,7 +331,7 @@ public class AccessAccount extends JFrame
         {
             try
             {
-                writer.close();
+                fileWriter.close();
             } catch (IOException e)
             {
                 e.printStackTrace();
@@ -345,36 +339,58 @@ public class AccessAccount extends JFrame
         }
     }
 
-
-    private void withdrawl(double withdrawlAmount)
+    private void saveCheckingAccount()
     {
-       // make connection to db
 
-     //   sqlConnection = databaseConnection.createConnectionToDatabase();
+        BufferedWriter fileWriter = null;
+        File checkingInfo = new File("C:\\Users\\Omid\\Desktop\\checking_info.txt");
+
+        try
+        {
+        fileWriter = new BufferedWriter(new FileWriter(checkingInfo));
+
+            //noinspection ResultOfMethodCallIgnored
+            checkingInfo.createNewFile();
+
+        saveClientInfo(fileWriter);
+        System.out.println("Client info saved");
+
+        saveCheckingDepositInfo(fileWriter);
+            System.out.println("Checking deposit info saved");
+        }
+        catch(IOException exception) {exception.printStackTrace();}
+
+
+    }
+
+
+    private void withdrawal(double withdrawlAmount)
+    {
 
         String updateStatement = "UPDATE checking_account SET account_balance = account_balance - ? where account_number = ?";
+
         String withdrawalStatement = "INSERT INTO checking_withdrawl (account_number, withdrawal) values(?,?)";
 
         try
         {
-        PreparedStatement preparedStatementWithdrawal = bankConnection.prepareStatement(withdrawalStatement);
-        PreparedStatement preparedStatementUpdate = bankConnection.prepareStatement(updateStatement);
+            PreparedStatement preparedStatementWithdrawal = bankConnection.prepareStatement(withdrawalStatement);
+            PreparedStatement preparedStatementUpdate = bankConnection.prepareStatement(updateStatement);
 
-        //WITHDRAWAL
-        preparedStatementWithdrawal.setInt(1, accountNumber);
-        preparedStatementWithdrawal.setDouble(2, withdrawlAmount);
+            //WITHDRAWAL
+            preparedStatementWithdrawal.setInt(1, getAccountNumber());
+            preparedStatementWithdrawal.setDouble(2, withdrawlAmount);
 
-        //UPDATE
-        preparedStatementUpdate.setDouble(1, withdrawlAmount);
-        preparedStatementUpdate.setInt(2, accountNumber);
+            //UPDATE
+            preparedStatementUpdate.setDouble(1, withdrawlAmount);
+            preparedStatementUpdate.setInt(2, getAccountNumber());
 
-        //Update checking account then make withdrawal
-        preparedStatementUpdate.execute();
-        preparedStatementWithdrawal.execute();
+            //Update checking account then make withdrawal
+            preparedStatementUpdate.execute();
+            preparedStatementWithdrawal.execute();
 
-        results.append(String.format("$ %.2f withdrawn from account # %d \n", withdrawlAmount, accountNumber));
+            results.append(String.format("$ %.2f withdrawn from account # %d \n", withdrawlAmount, getAccountNumber()));
 
-        input.setText("");
+            input.setText("");
 
         }
         catch(SQLException e)
@@ -383,17 +399,35 @@ public class AccessAccount extends JFrame
         }
     }
 
-    class MenuActionListener implements ActionListener
+    public int getAccountNumber()
     {
-
-        @Override
-        public void actionPerformed(ActionEvent evt)
-        {
-            if(evt.getActionCommand().equals("Save")) saveCheckingAccount();
-        }
+        return accountNumber;
     }
 
+    public void setAccountNumber(int accountNumber)
+    {
+        this.accountNumber = accountNumber;
+    }
 
+    public double getAccountBalance()
+    {
+        return accountBalance;
+    }
+
+    public void setAccountBalance(double accountBalance)
+    {
+        this.accountBalance = accountBalance;
+    }
+
+    class MenuActionListener implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent)
+        {
+            System.out.println("action performed");
+            if(actionEvent.getActionCommand().equals("Save Deposit History")) saveCheckingAccount();
+        }
+    }
 }// close AccessAccount
 
 
@@ -403,8 +437,6 @@ class TransactionActionListener implements ActionListener
 
     public void actionPerformed(ActionEvent e)
     {
-        System.out.println("TransactionActionListener");
-
         if(e.getActionCommand().equals("Deposit"))
         {
             AccessAccount.results.append("Enter amount to deposit" + "\n");
@@ -415,11 +447,5 @@ class TransactionActionListener implements ActionListener
             AccessAccount.results.append("Enter amount to withdraw" + "\n");
             actionPerformed = "Withdrawal";
         }
-
     }
-
 }
-
-
-
-
