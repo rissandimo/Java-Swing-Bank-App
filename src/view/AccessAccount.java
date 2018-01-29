@@ -22,7 +22,7 @@ public class AccessAccount extends JFrame
 
     protected static JTextArea results;
     private JTextField input;
-    private JPanel panelTop;
+    private JPanel panelTop = new JPanel();
 
     private int accountNumber;
     private double accountBalance;
@@ -116,17 +116,9 @@ public class AccessAccount extends JFrame
         panelTop.add(menuBar);
     }
 
-    private void createView()
+    private void createPanels()
     {
-        setSize(650, 600);
-        setTitle("Access account");
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
         //TOP PANEL - BUTTONS
-        panelTop = new JPanel();
-
-        createMenu();
 
         JButton deposit = new JButton("Deposit");
 
@@ -192,6 +184,18 @@ public class AccessAccount extends JFrame
 
 
         setVisible(true);
+    }
+
+    private void createView()
+    {
+        setSize(650, 600);
+        setTitle("Access account");
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        createMenu();
+
+        createPanels();
     }
 
 
