@@ -1,0 +1,8 @@
+Clean RemoveClientAccount
+One client is removed from account - repopulate the client list
+Once a withdraw amount is made - clear the text box
+Print out the customer's name with each first initial capitalized - checking deposit log
+
+Modify save method to ask for save location
+Replace try/catch w/ try/with resources
+Figure out why log out message won't show when log out button pressed
