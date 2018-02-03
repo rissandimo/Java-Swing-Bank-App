@@ -10,7 +10,8 @@ import java.sql.*;
 
 public class RemoveClientAccount
 {
-    private DatabaseConnection bankConnection;
+    private Connection bankConnection;
+    private PreparedStatement preparedStatement;
     private static int ACCOUNT_NUMBER;
 
 
@@ -21,41 +22,15 @@ public class RemoveClientAccount
 
     public RemoveClientAccount()
     {
-        bankConnection = new DatabaseConnection();
+        bankConnection = new DatabaseConnection().createConnectionToDatabase();
         new Frame();
     }
 
-
-
-    private void removeClient(int ACCOUNT_NUMBER)
+    public void removeCheckingAccount() throws SQLException
     {
-        Connection connection = bankConnection.createConnectionToDatabase();
-
-        String removeClientCK_WITHDRAWAL = "DELETE FROM checking_withdrawl where account_number = ?";
-        String removeClientCK_DEPOSIT = "DELETE FROM checking_deposit where account_number = ?";
         String removeClientCK_ACCT = "DELETE FROM checking_account where account_number = ?";
-        String removeClient = "DELETE FROM clients where account_number = ?";
 
-        try
-        {
-                            //CHECKING WITHDRAWAL
-        PreparedStatement preparedStatement = connection.prepareStatement(removeClientCK_WITHDRAWAL);
-
-        preparedStatement.setInt(1, ACCOUNT_NUMBER);
-
-        preparedStatement.execute();
-
-                            //CHECKING DEPOSIT
-        preparedStatement = connection.prepareStatement(removeClientCK_DEPOSIT);
-
-        preparedStatement.setInt(1, ACCOUNT_NUMBER);
-
-        preparedStatement.execute();
-
-        System.out.println("client removed from checking_deposit");
-
-                            //CHECKING ACCOUNT
-        preparedStatement = connection.prepareStatement(removeClientCK_ACCT);
+        preparedStatement = bankConnection.prepareStatement(removeClientCK_ACCT);
 
         preparedStatement.setInt(1, ACCOUNT_NUMBER);
 
@@ -63,8 +38,39 @@ public class RemoveClientAccount
 
         System.out.println("client removed from checking_account");
 
-                            //CLIENT
-        preparedStatement = connection.prepareStatement(removeClient);
+    }
+
+    public void removeCheckingDeposit() throws SQLException
+    {
+        String removeClientCK_DEPOSIT = "DELETE FROM checking_deposit where account_number = ?";
+
+        preparedStatement = bankConnection.prepareStatement(removeClientCK_DEPOSIT);
+
+        preparedStatement.setInt(1, ACCOUNT_NUMBER);
+
+        preparedStatement.execute();
+
+        System.out.println("client removed from checking_deposit");
+    }
+
+    public void removeCheckingWithdrawal() throws SQLException
+    {
+        String removeClientCK_WITHDRAWAL = "DELETE FROM checking_withdrawl where account_number = ?";
+
+        preparedStatement = bankConnection.prepareStatement(removeClientCK_WITHDRAWAL);
+
+        preparedStatement.setInt(1, ACCOUNT_NUMBER);
+
+        preparedStatement.execute();
+
+    }
+
+    private void removeClientFromDatabase() throws SQLException
+    {
+        String removeClient = "DELETE FROM clients where account_number = ?";
+
+
+        preparedStatement = bankConnection.prepareStatement(removeClient);
 
         preparedStatement.setInt(1, ACCOUNT_NUMBER);
 
@@ -72,11 +78,20 @@ public class RemoveClientAccount
 
         System.out.println("client removed from clients");
 
-        }
-        catch(SQLException e)
-        {
-            e.printStackTrace();
-        }
+
+    }
+
+    private void removeClient(int ACCOUNT_NUMBER) throws SQLException
+    {
+
+        removeCheckingDeposit();
+
+        removeCheckingWithdrawal();
+
+        removeCheckingAccount();
+
+       // Connection connection = bankConnection.createConnectionToDatabase();
+        // CHECKING WITHDRAWAL, //CHECKING DEPOSIT,  //CHECKING ACCOUNT,   //CLIENT
 
 
     }
@@ -125,11 +140,11 @@ public class RemoveClientAccount
 
         public void displayClients()
         {
-            Connection connection = bankConnection.createConnectionToDatabase();
+          //  Connection connection = bankConnection.createConnectionToDatabase();
 
             try
             {
-                Statement statement = connection.createStatement();
+                Statement statement = bankConnection.createStatement();
 
                 String clientStatement = "SELECT first_name, last_name, account_number FROM clients";
 
@@ -156,7 +171,13 @@ public class RemoveClientAccount
         {
             public void actionPerformed(ActionEvent e)
             {
-                removeClient(Integer.parseInt(input.getText()));
+                try
+                {
+                    removeClient(Integer.parseInt(input.getText()));
+                } catch(SQLException e1)
+                {
+                    e1.printStackTrace();
+                }
             }
         }
     }// close Frame
