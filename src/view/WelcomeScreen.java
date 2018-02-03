@@ -11,58 +11,65 @@ import java.awt.*;
 public class WelcomeScreen extends JFrame
 {
 
-    public WelcomeScreen() {
-        System.out.println("Welcome screen");
+    public WelcomeScreen()
+    {
+        new AccessAccountFrame();
+    }
 
-
-        setBounds(400, 300, 500, 400);
-        setTitle("Nassir Bank");
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        //BUTTONS
-
-        JButton buttonAccessAccount = new JButton("Access Account");
-        buttonAccessAccount.addActionListener(e ->
+        class AccessAccountFrame extends JFrame
         {
-            dispose();
-            new OpenAccount();
-        });
+            public AccessAccountFrame()
+            {
+                setSize(500, 200);
+                setLocationRelativeTo(null);
+                setTitle("Nassir Bank");
+                setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        JButton buttonCreateAccount = new JButton("Create Account");
-        buttonCreateAccount.addActionListener(e ->
-        {
-            dispose();
-            new CreateAccount();
-        });
+                //BUTTONS
 
-        JButton buttonDeleteAccount = new JButton("Delete Account");
-        buttonDeleteAccount.addActionListener(e ->
-        {
-            dispose();
-            new RemoveClientAccount();
-        });
+                JButton buttonAccessAccount = new JButton("Access Account");
+                buttonAccessAccount.addActionListener(e ->
+                {
+                    dispose();
+                    new OpenAccount();
+                });
 
-        //LABELS
+                JButton buttonCreateAccount = new JButton("Create Account");
+                buttonCreateAccount.addActionListener(e ->
+                {
+                    dispose();
+                    new CreateAccount();
+                });
 
-        JLabel labelSelection = new JLabel("Please make a selection below");
+                JButton buttonDeleteAccount = new JButton("Delete Account");
+                buttonDeleteAccount.addActionListener(e ->
+                {
+                    dispose();
+                    new RemoveClientAccount();
+                });
+
+                //LABELS
+
+                JLabel labelSelection = new JLabel("Please make a selection below");
 
 
-        //PANELS
-        JPanel buttonsPanel = new JPanel();
-        JPanel labelPanel =   new JPanel();
+                //PANELS
+                JPanel buttonsPanel = new JPanel();
+                JPanel labelPanel =   new JPanel();
 
 
-        // ADD COMPONENTS TO FRAME
+                // ADD COMPONENTS TO FRAME
 
-        buttonsPanel.add(buttonAccessAccount);
-        buttonsPanel.add(buttonCreateAccount);
-        buttonsPanel.add(buttonDeleteAccount);
+                buttonsPanel.add(buttonAccessAccount);
+                buttonsPanel.add(buttonCreateAccount);
+                buttonsPanel.add(buttonDeleteAccount);
 
-        labelPanel.add(labelSelection);
+                labelPanel.add(labelSelection);
 
-        add(buttonsPanel, BorderLayout.SOUTH);
-        add(labelPanel, BorderLayout.CENTER);
+                add(buttonsPanel, BorderLayout.SOUTH);
+                add(labelPanel, BorderLayout.CENTER);
 
-        setVisible(true);
+                setVisible(true);
+            }
         }
     }
